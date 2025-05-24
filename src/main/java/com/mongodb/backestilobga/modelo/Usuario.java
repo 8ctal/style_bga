@@ -26,18 +26,26 @@ public class Usuario {
 
     private String celular;
 
-    private String rol;
+    private Rol rol;
+
     @Field("fecha_registro")
     private Date fechaRegistro;
 
     @Field("perfil_estilista")
     private PerfilEstilista perfilEstilista;
 
+    // Clase roles, en este caso admin, cliente y estilista
+    public enum Rol {
+        admin,
+        cliente,
+        estilista
+    }
+
     // Constructores
     public Usuario() {
     }
 
-    public Usuario(String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, String rol, Date fechaRegistro, PerfilEstilista perfilEstilista) {
+    public Usuario(String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, Rol rol, Date fechaRegistro, PerfilEstilista perfilEstilista) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.numeroDocumento = numeroDocumento;
@@ -106,11 +114,11 @@ public class Usuario {
         this.celular = celular;
     }
 
-    public String getRol() {
+    public Rol getRol() {
         return rol;
     }
 
-    public void setRol(String rol) {
+    public void setRol(Rol rol) {
         this.rol = rol;
     }
 
