@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/vendedor/**").hasRole("VENDEDOR")
                         .requestMatchers("/api/proveedor/**").hasRole("PROVEEDOR")
+                        .requestMatchers("/api/citas/**").permitAll()
                         .anyRequest().authenticated() // Cualquier otra ruta NO especificada arriba requerirá autenticación
                 )
                 .httpBasic(basic -> basic.disable())
