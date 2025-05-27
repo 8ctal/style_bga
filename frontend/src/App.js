@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import React, { useState } from 'react';
-import CitaList from './components/CitaList';
-import CitaForm from './components/CitaForm';
-
+import React from 'react';
+import CrudCita from './pages/CrudCita.js';
+import ManejoEstilista from './pages/ManejoEstilista';
 
 function App() {
-  const [citaSeleccionada, setCitaSeleccionada] = useState(null);
-
-  const handleGuardado = () => {
-    setCitaSeleccionada(null);
-  };
-
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4 text-center">CRUD de Citas</h1>
-      <CitaForm citaSeleccionada={citaSeleccionada} onSave={handleGuardado} />
-      <CitaList onEdit={setCitaSeleccionada} />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={
+            <div className="container mt-5">
+              <h1 className="mb-4 text-center">Hola mundo, Esta es la vista principal o home</h1>
+            </div>
+          } />
+          {/* Ejemplo de cómo agregar más rutas */}
+          <Route path="/citas" element={<CrudCita />} />
+          <Route path="/estilistas" element={<ManejoEstilista />} />
+          <Route path="/servicios" element={<div>Página de Servicios</div>} />
+          <Route path="*" element={<div>404 - Página no encontrada</div>} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
