@@ -8,7 +8,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-  }
+  },
+  withCredentials: false // Importante para CORS
 });
 
 // Interceptor para manejar errores
@@ -21,12 +22,8 @@ api.interceptors.response.use(
 );
 
 // Funciones para el CRUD de clientes
-export const getClientes = () => api.get('/list?rol=cliente');
+export const getClientes = () => api.get('/list');
 export const getClienteById = (id) => api.get(`/list/${id}`);
-export const agregarCliente = (cliente) => api.post('/agregar', {
-  ...cliente,
-  rol: 'cliente',
-  fechaRegistro: new Date()
-});
+export const agregarCliente = (cliente) => api.post('/agregar', { ...cliente, rol: 'cliente' });
 export const editarCliente = (cliente) => api.put('/editar', cliente);
 export const eliminarCliente = (id) => api.delete(`/eliminar/${id}`); 

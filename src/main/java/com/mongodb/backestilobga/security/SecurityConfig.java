@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/proveedor/**").hasRole("PROVEEDOR")
                         .requestMatchers("/api/citas/**").permitAll()
                         .requestMatchers("/api/usuarios/**").permitAll()
+                        .requestMatchers("/api/servicios/**").permitAll()
                         .requestMatchers(req -> req.getMethod().equals("OPTIONS")).permitAll()
                         .anyRequest().authenticated() // Cualquier otra ruta NO especificada arriba requerirá autenticación
                 )

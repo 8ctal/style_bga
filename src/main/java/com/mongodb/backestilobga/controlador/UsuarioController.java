@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -21,8 +22,19 @@ public class UsuarioController {
 
     // Buscar todos los usuarios
     @GetMapping("/list")
-    public List<Usuario> buscarUsuarios() {
-        return usuarioServicio.buscarUsuarios();
+    public List<Usuario> buscarUsuarios(@RequestParam(required = false) String rol) {
+        System.out.println("Recibida petición de usuarios con rol: " + rol);
+        List<Usuario> usuarios = usuarioServicio.buscarUsuarios();
+        System.out.println("Total de usuarios encontrados: " + usuarios.size());
+        
+        if (rol != null && !rol.isEmpty()) {
+            List<Usuario> usuariosFiltrados = usuarios.stream()
+                    .filter(u -> u.getRol() != null && u.getRol().name().equalsIgnoreCase(rol))
+                    .collect(Collectors.toList());
+            System.out.println("Usuarios filtrados por rol " + rol + ": " + usuariosFiltrados.size());
+            return usuariosFiltrados;
+        }
+        return usuarios;
     }
 
     // Buscar usuario por id
