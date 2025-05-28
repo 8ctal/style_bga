@@ -1,8 +1,11 @@
 // components/EstilistaTabla.js
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../ManejoEstilista.module.css';
 
 const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSearchChange }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
   // Asegurarse de que stylists sea un array
   const stylistsArray = Array.isArray(stylists) ? stylists : [];
   
@@ -20,8 +23,15 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
     );
   });
 
+  // Calcular índices para la paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredStylists.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredStylists.length / itemsPerPage);
+
   const handleSearchChange = (e) => {
     onSearchChange(e.target.value);
+    setCurrentPage(1); // Resetear a la primera página cuando se busca
   };
 
   const formatPhoneNumber = (phone) => {
@@ -43,20 +53,18 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
         </div>
       </div>
       
-      <div className={styles.formGroup}>
-        <div className={styles.searchContainer}>
-          <input
-            type="text"
-            className={styles.formInput}
-            placeholder="Buscar por nombre, apellido, especialidad, correo, teléfono o cédula..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Buscar por nombre, apellido, especialidad, correo, teléfono o cédula..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
       </div>
       
       <div className={styles.tableContainer}>
-        {filteredStylists.length === 0 ? (
+        {currentItems.length === 0 ? (
           <div className={styles.emptyMessage}>
             {searchTerm ? 
               `No se encontraron estilistas que coincidan con "${searchTerm}"` : 
@@ -79,7 +87,7 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
                 </tr>
               </thead>
               <tbody>
-                {filteredStylists.map((stylist) => (
+                {currentItems.map((stylist) => (
                   <tr key={stylist.idUsuario} className={styles.tableRow}>
                     <td className={styles.tableCell}>
                       {stylist.nombres || 'No especificado'}
@@ -118,8 +126,9 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
                         <button
                           className={styles.buttonDanger}
                           onClick={() => {
-                            console.log('Clic en eliminar estilista:', stylist.idUsuario);
-                            onDelete(stylist.idUsuario);
+                            if (window.confirm('¿Está seguro que desea eliminar este estilista?')) {
+                              onDelete(stylist.idUsuario);
+                            }
                           }}
                           title="Eliminar estilista"
                         >
@@ -131,6 +140,34 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              className={styles.paginationButton}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                className={`${styles.paginationButton} ${currentPage === index + 1 ? styles.active : ''}`}
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              className={styles.paginationButton}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
           </div>
         )}
       </div>

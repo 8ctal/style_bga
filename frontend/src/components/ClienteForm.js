@@ -1,90 +1,71 @@
-// components/EstilistaFormulario.js
 import React, { useState, useEffect } from 'react';
-import styles from '../ManejoEstilista.module.css';
+import { agregarCliente, editarCliente } from '../services/clienteService';
+import styles from './Cliente.module.css';
 
-const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
-  const [formData, setFormData] = useState({
+export default function ClienteForm({ clienteSeleccionado, onSave, onActionSuccess }) {
+  const [cliente, setCliente] = useState({
     nombres: '',
     apellidos: '',
+    numeroDocumento: '',
     correoElectronico: '',
     celular: '',
-    numeroDocumento: '',
-    especializacion: '',
-    aniosExperiencia: 0,
     password: ''
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPasswordField, setShowPasswordField] = useState(!isEditing);
+  const [showPasswordField, setShowPasswordField] = useState(false);
 
   useEffect(() => {
-    if (stylist) {
-      setFormData({
-        nombres: stylist.nombres || '',
-        apellidos: stylist.apellidos || '',
-        correoElectronico: stylist.correoElectronico || '',
-        celular: stylist.celular || '',
-        numeroDocumento: stylist.numeroDocumento || '',
-        especializacion: stylist.perfilEstilista?.especializacion || '',
-        aniosExperiencia: stylist.perfilEstilista?.aniosExperiencia || 0,
-        password: ''
+    if (clienteSeleccionado) {
+      setCliente({
+        ...clienteSeleccionado,
+        password: '' // Inicializamos password vacío
       });
-      setShowPasswordField(false);
+      setShowPasswordField(false); // Ocultamos el campo de contraseña al editar
     } else {
-      setFormData({
+      setCliente({
         nombres: '',
         apellidos: '',
+        numeroDocumento: '',
         correoElectronico: '',
         celular: '',
-        numeroDocumento: '',
-        especializacion: '',
-        aniosExperiencia: 0,
         password: ''
       });
-      setShowPasswordField(true);
+      setShowPasswordField(true); // Mostramos el campo de contraseña para nuevo cliente
     }
-    setErrors({});
-  }, [stylist]);
+  }, [clienteSeleccionado]);
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.nombres.trim()) {
+    
+    if (!cliente.nombres.trim()) {
       newErrors.nombres = 'Los nombres son requeridos';
     }
-
-    if (!formData.apellidos.trim()) {
+    
+    if (!cliente.apellidos.trim()) {
       newErrors.apellidos = 'Los apellidos son requeridos';
     }
-
-    if (!formData.correoElectronico.trim()) {
+    
+    if (!cliente.numeroDocumento.trim()) {
+      newErrors.numeroDocumento = 'El número de documento es requerido';
+    }
+    
+    if (!cliente.correoElectronico.trim()) {
       newErrors.correoElectronico = 'El correo electrónico es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(formData.correoElectronico)) {
+    } else if (!/\S+@\S+\.\S+/.test(cliente.correoElectronico)) {
       newErrors.correoElectronico = 'El correo electrónico no es válido';
     }
-
-    if (!formData.celular.trim()) {
-      newErrors.celular = 'El teléfono es requerido';
+    
+    if (!cliente.celular.trim()) {
+      newErrors.celular = 'El celular es requerido';
+    }
+    
+    if (!clienteSeleccionado && !cliente.password) {
+      newErrors.password = 'La contraseña es requerida para nuevos clientes';
     }
 
-    if (!formData.numeroDocumento.trim()) {
-      newErrors.numeroDocumento = 'La cédula es requerida';
-    }
-
-    if (!formData.especializacion.trim()) {
-      newErrors.especializacion = 'La especialidad es requerida';
-    }
-
-    if (formData.aniosExperiencia < 0) {
-      newErrors.aniosExperiencia = 'Los años de experiencia no pueden ser negativos';
-    }
-
-    if (!isEditing && !formData.password) {
-      newErrors.password = 'La contraseña es requerida para nuevos estilistas';
-    }
-
-    if (showPasswordField && formData.password && formData.password.length < 6) {
+    if (showPasswordField && cliente.password && cliente.password.length < 6) {
       newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
     }
 
@@ -94,11 +75,11 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setCliente(prev => ({
       ...prev,
       [name]: value
     }));
-
+    
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -113,53 +94,65 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
 
     setIsSubmitting(true);
     try {
-      const usuarioData = {
-        ...formData,
-        rol: 'estilista',
-        perfilEstilista: {
-          especializacion: formData.especializacion.trim(),
-          aniosExperiencia: parseInt(formData.aniosExperiencia, 10)
-        }
-      };
-
-      if (isEditing) {
-        usuarioData.idUsuario = stylist.idUsuario;
-        if (!formData.password) {
-          delete usuarioData.password;
-        }
+      const clienteData = { ...cliente };
+      
+      // Si estamos editando y no se ha ingresado una nueva contraseña, la eliminamos del objeto
+      if (clienteSeleccionado && !cliente.password) {
+        delete clienteData.password;
       }
 
-      await onSave(usuarioData);
+      const action = cliente.idUsuario ? editarCliente : agregarCliente;
+      await action(clienteData);
       
-      setFormData({
+      onActionSuccess(
+        cliente.idUsuario 
+          ? 'Cliente actualizado exitosamente' 
+          : 'Cliente agregado exitosamente'
+      );
+      
+      onSave();
+      setCliente({
         nombres: '',
         apellidos: '',
+        numeroDocumento: '',
         correoElectronico: '',
         celular: '',
-        numeroDocumento: '',
-        especializacion: '',
-        aniosExperiencia: 0,
         password: ''
       });
       setShowPasswordField(true);
     } catch (error) {
       console.error('Error:', error);
+      onActionSuccess('Error al procesar la operación', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleCancel = () => {
+    setCliente({
+      nombres: '',
+      apellidos: '',
+      numeroDocumento: '',
+      correoElectronico: '',
+      celular: '',
+      password: ''
+    });
+    setShowPasswordField(true);
+    setErrors({});
+    onSave();
+  };
+
   const togglePasswordField = () => {
     setShowPasswordField(!showPasswordField);
     if (!showPasswordField) {
-      setFormData(prev => ({ ...prev, password: '' }));
+      setCliente(prev => ({ ...prev, password: '' }));
     }
   };
 
   return (
     <section className={styles.card}>
       <h2 className={styles.formTitle}>
-        {isEditing ? 'Editar Estilista' : 'Agregar Nuevo Estilista'}
+        {cliente.idUsuario ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -169,7 +162,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
               type="text"
               name="nombres"
               className={`${styles.formInput} ${errors.nombres ? styles.errorInput : ''}`}
-              value={formData.nombres}
+              value={cliente.nombres}
               onChange={handleChange}
               placeholder="Ingrese nombres"
               disabled={isSubmitting}
@@ -183,7 +176,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
               type="text"
               name="apellidos"
               className={`${styles.formInput} ${errors.apellidos ? styles.errorInput : ''}`}
-              value={formData.apellidos}
+              value={cliente.apellidos}
               onChange={handleChange}
               placeholder="Ingrese apellidos"
               disabled={isSubmitting}
@@ -194,43 +187,12 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
 
         <div className="row">
           <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Especialidad</label>
-            <input
-              type="text"
-              name="especializacion"
-              className={`${styles.formInput} ${errors.especializacion ? styles.errorInput : ''}`}
-              value={formData.especializacion}
-              onChange={handleChange}
-              placeholder="Ej: Corte de cabello, Coloración, Peinados"
-              disabled={isSubmitting}
-            />
-            {errors.especializacion && <div className={styles.errorText}>{errors.especializacion}</div>}
-          </div>
-
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Años de Experiencia</label>
-            <input
-              type="number"
-              name="aniosExperiencia"
-              className={`${styles.formInput} ${errors.aniosExperiencia ? styles.errorInput : ''}`}
-              value={formData.aniosExperiencia}
-              onChange={handleChange}
-              min="0"
-              max="50"
-              disabled={isSubmitting}
-            />
-            {errors.aniosExperiencia && <div className={styles.errorText}>{errors.aniosExperiencia}</div>}
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col-md-6 mb-3">
             <label className={styles.formLabel}>Número de Documento</label>
             <input
               type="text"
               name="numeroDocumento"
               className={`${styles.formInput} ${errors.numeroDocumento ? styles.errorInput : ''}`}
-              value={formData.numeroDocumento}
+              value={cliente.numeroDocumento}
               onChange={handleChange}
               placeholder="Ingrese número de documento"
               disabled={isSubmitting}
@@ -244,7 +206,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
               type="tel"
               name="celular"
               className={`${styles.formInput} ${errors.celular ? styles.errorInput : ''}`}
-              value={formData.celular}
+              value={cliente.celular}
               onChange={handleChange}
               placeholder="Ingrese número de celular"
               disabled={isSubmitting}
@@ -259,7 +221,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
             type="email"
             name="correoElectronico"
             className={`${styles.formInput} ${errors.correoElectronico ? styles.errorInput : ''}`}
-            value={formData.correoElectronico}
+            value={cliente.correoElectronico}
             onChange={handleChange}
             placeholder="Ingrese correo electrónico"
             disabled={isSubmitting}
@@ -267,7 +229,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
           {errors.correoElectronico && <div className={styles.errorText}>{errors.correoElectronico}</div>}
         </div>
 
-        {isEditing && (
+        {cliente.idUsuario && (
           <div className="mb-3">
             <button
               type="button"
@@ -279,18 +241,18 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
           </div>
         )}
 
-        {(showPasswordField || !isEditing) && (
+        {(showPasswordField || !cliente.idUsuario) && (
           <div className="mb-3">
             <label className={styles.formLabel}>
-              {isEditing ? 'Nueva Contraseña' : 'Contraseña'}
+              {cliente.idUsuario ? 'Nueva Contraseña' : 'Contraseña'}
             </label>
             <input
               type="password"
               name="password"
               className={`${styles.formInput} ${errors.password ? styles.errorInput : ''}`}
-              value={formData.password}
+              value={cliente.password}
               onChange={handleChange}
-              placeholder={isEditing ? 'Ingrese nueva contraseña' : 'Ingrese contraseña'}
+              placeholder={cliente.idUsuario ? 'Ingrese nueva contraseña' : 'Ingrese contraseña'}
               disabled={isSubmitting}
             />
             {errors.password && <div className={styles.errorText}>{errors.password}</div>}
@@ -298,11 +260,11 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
         )}
 
         <div className={styles.flexBetween}>
-          {isEditing && (
+          {cliente.idUsuario && (
             <button
               type="button"
               className={styles.buttonSecondary}
-              onClick={onCancel}
+              onClick={handleCancel}
               disabled={isSubmitting}
             >
               Cancelar
@@ -313,12 +275,10 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
             className={styles.buttonPrimary}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar')}
+            {isSubmitting ? 'Guardando...' : (cliente.idUsuario ? 'Actualizar' : 'Guardar')}
           </button>
         </div>
       </form>
     </section>
   );
-};
-
-export default EstilistaFormulario;
+} 

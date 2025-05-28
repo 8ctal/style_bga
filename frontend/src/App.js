@@ -3,6 +3,7 @@ import './App.css';
 import React from 'react';
 import CrudCita from './pages/CrudCita.js';
 import ManejoEstilista from './pages/ManejoEstilista';
+import CrudCliente from './pages/CrudCliente';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           {/* Ejemplo de cómo agregar más rutas */}
           <Route path="/citas" element={<CrudCita />} />
           <Route path="/estilistas" element={<ManejoEstilista />} />
+          <Route path="/clientes" element={<CrudCliente />} />
           <Route path="/servicios" element={<div>Página de Servicios</div>} />
           <Route path="*" element={<div>404 - Página no encontrada</div>} />
         </Routes>
