@@ -12,6 +12,7 @@ const ManejoEstilista = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // Cargar estilistas al inicializar
   useEffect(() => {
@@ -61,14 +62,20 @@ const ManejoEstilista = () => {
     }
   };
 
+  const handleOpenModal = () => {
+    setCurrentStylist(null);
+    setIsEditing(false);
+    setShowModal(true);
+  };
+
   const handleEdit = async (id) => {
     try {
       setLoading(true);
       setError('');
       const estilista = await getEstilistaById(id);
-      console.log('Estilista a editar:', estilista); // Debug
       setCurrentStylist(estilista);
       setIsEditing(true);
+      setShowModal(true); // <-- Abrir modal al editar
     } catch (err) {
       setError('Error al cargar el estilista para editar.');
       console.error('Error al cargar estilista:', err);
@@ -80,6 +87,7 @@ const ManejoEstilista = () => {
   const handleCancel = () => {
     setCurrentStylist(null);
     setIsEditing(false);
+    setShowModal(false); // <-- Cerrar modal
   };
 
   const handleDelete = async (id) => {
@@ -130,7 +138,7 @@ const ManejoEstilista = () => {
   return (
     <div className={styles.container}>
       <header>
-        <h1>Gestión de Estilistas</h1>
+        <h1 className={styles.headerTitle}>Gestión de Estilistas</h1>
       </header>
 
       {error && (
@@ -140,19 +148,42 @@ const ManejoEstilista = () => {
       )}
 
       {successMessage && (
-        <div className={styles.successMessage}>
+        <div className={styles.toastSuccess}>
           {successMessage}
         </div>
       )}
 
       <main>
-        <EstilistaFormulario
-          stylist={currentStylist}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          isEditing={isEditing}
-        />
-        
+        <button
+          className={styles.buttonPrimary}
+          style={{ marginBottom: '1rem', fontSize: '1.1rem', padding: '0.7rem 2rem', borderRadius: '2rem' }}
+          onClick={handleOpenModal}
+        >
+          Agendar Estilista
+        </button>
+
+        {/* Modal */}
+        {showModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <button
+                className={styles.closeButton}
+                onClick={handleCancel}
+                aria-label="Cerrar"
+                type="button"
+              >
+                &times;
+              </button>
+              <EstilistaFormulario
+                stylist={currentStylist}
+                onSave={handleSave}
+                onCancel={handleCancel}
+                isEditing={isEditing}
+              />
+            </div>
+          </div>
+        )}
+
         <EstilistaTabla
           stylists={stylists}
           onEdit={handleEdit}
