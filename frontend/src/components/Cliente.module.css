@@ -1,0 +1,244 @@
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Estilos para botones */
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.buttonPrimary {
+  composes: button;
+  background-color: #000000;
+  color: white;
+}
+
+.buttonSecondary {
+  composes: button;
+  background-color: #6c757d;
+  color: white;
+}
+
+.buttonDanger {
+  composes: button;
+  background-color: #dc3545;
+  color: white;
+}
+
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Estilos para tablas */
+.tableContainer {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.tableHeader {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.tableCell {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.tableRow:hover {
+  background-color: #f5f8fa;
+}
+
+/* Estilos para mensajes */
+.emptyMessage {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+}
+
+/* Utilidades */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchContainer {
+  position: relative;
+  max-width: 500px;
+  margin-bottom: 1rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  background-color: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+/* Estilos para los botones de acción */
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.editButton {
+  composes: button;
+  background-color: black;
+  color: white;
+  padding: 6px 12px;
+}
+
+.deleteButton {
+  composes: button;
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 12px;
+}
+
+/* Estilos para la paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.paginationButton {
+  composes: button;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  color: #000;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.paginationButton.active {
+  background-color: #000;
+  color: white;
+  border-color: #000;
+}
+
+.paginationButton:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Estilos para formularios */
+.formTitle {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.errorInput {
+  border-color: #dc3545;
+}
+
+.errorInput:focus {
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.errorText {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.buttonLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #000;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.buttonLink:hover {
+  color: #666;
+} 

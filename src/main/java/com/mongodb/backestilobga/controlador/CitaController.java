@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/citas")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {
+    RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS
+})
 public class CitaController {
 
     @Autowired
@@ -62,7 +65,7 @@ public class CitaController {
             citaServicio.eliminarCita(id);
             return new ResponseEntity<>(citaExistente, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

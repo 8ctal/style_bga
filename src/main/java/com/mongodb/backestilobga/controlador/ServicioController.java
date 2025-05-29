@@ -11,6 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/servicios")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {
+    RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS
+})
 public class ServicioController {
 
     @Autowired
@@ -19,7 +22,10 @@ public class ServicioController {
     // Buscar todos los servicios
     @GetMapping("/list")
     public List<Servicio> buscarServicios() {
-        return servicioServicio.buscarServicios();
+        System.out.println("Recibida petición para listar servicios");
+        List<Servicio> servicios = servicioServicio.buscarServicios();
+        System.out.println("Total de servicios encontrados: " + servicios.size());
+        return servicios;
     }
 
     // Buscar servicio por id
