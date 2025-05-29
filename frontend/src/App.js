@@ -4,11 +4,13 @@ import React from 'react';
 import CrudCita from './pages/CrudCita.js';
 import ManejoEstilista from './pages/ManejoEstilista';
 import CrudCliente from './pages/CrudCliente';
+import Navbar from './components/Navbar'; // <-- Importa el navbar
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <Navbar /> {/* <-- Agrega el navbar aquí */}
         <Routes>
           <Route path="/" element={
             <div className="container mt-5">
