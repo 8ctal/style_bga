@@ -20,6 +20,7 @@ export default function Reportes() {
 
   // Datos para la gráfica de barras
   const totalesPorMes = agruparTotalesPorMesYCita(citas, anioSeleccionado);
+  const totalIngresosAnual = totalesPorMes.reduce((acc, val) => acc + val, 0);
   const dataBar = {
     labels: meses,
     datasets: [
@@ -50,12 +51,30 @@ export default function Reportes() {
     <div className="container mt-5">
       <h2 className="mb-4 text-center">Reportes Anuales</h2>
       <div className="mb-3">
-        <label>Seleccionar año:&nbsp;</label>
+        <label>Año:&nbsp;</label>
         <select value={anioSeleccionado} onChange={e => setAnioSeleccionado(Number(e.target.value))}>
           {aniosDisponibles.map(anio => (
             <option key={anio} value={anio}>{anio}</option>
           ))}
         </select>
+      </div>
+      <div
+        className="resumen-anual"
+        style={{
+          background: '#f5f6fa',
+          borderRadius: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+          padding: '1.5rem 1rem',
+          marginBottom: '2rem',
+          maxWidth: '800px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontSize: '1.3rem',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}
+      >
+        Total de ingresos en {anioSeleccionado}: ${totalIngresosAnual.toLocaleString('es-CO', {minimumFractionDigits: 2})}
       </div>
       <div className="graficos-container">
         <div className="grafico grafico-barra">
