@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCitas } from '../services/citaService';
-import { agruparTotalesPorMesYCita, obtenerAniosDisponibles } from '../utils/citasReportUtils';
-import { Bar } from 'react-chartjs-2';
+import { agruparTotalesPorMesYCita, obtenerAniosDisponibles, contarServiciosPorAnio } from '../utils/citasReportUtils';
+import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -18,15 +18,30 @@ export default function Reportes() {
     });
   }, []);
 
+  // Datos para la gráfica de barras
   const totalesPorMes = agruparTotalesPorMesYCita(citas, anioSeleccionado);
-
-  const data = {
+  const dataBar = {
     labels: meses,
     datasets: [
       {
         label: `Total por mes (${anioSeleccionado})`,
         data: totalesPorMes,
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      },
+    ],
+  };
+
+  // Datos para la gráfica circular
+  const serviciosPorAnio = contarServiciosPorAnio(citas, anioSeleccionado);
+  const labelsPie = Object.keys(serviciosPorAnio);
+  const dataPie = {
+    labels: labelsPie,
+    datasets: [
+      {
+        data: Object.values(serviciosPorAnio),
+        backgroundColor: [
+          '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'
+        ],
       },
     ],
   };
@@ -42,7 +57,9 @@ export default function Reportes() {
           ))}
         </select>
       </div>
-      <Bar data={data} />
+      <Bar data={dataBar} className="mb-5" />
+      <h2 className="mb-4 text-center">Porcentaje de Servicios Solicitados</h2>
+      <Pie data={dataPie} />
     </div>
   );
 }

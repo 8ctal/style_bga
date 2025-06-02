@@ -24,3 +24,18 @@ export function obtenerAniosDisponibles(citas) {
   });
   return Array.from(anios).sort((a, b) => b - a);
 }
+
+export function contarServiciosPorAnio(citas, year) {
+  const conteo = {};
+  citas.forEach(cita => {
+    if (!cita.fechaCita || !cita.servicios) return;
+    const fecha = new Date(cita.fechaCita);
+    if (fecha.getFullYear() === year) {
+      cita.servicios.forEach(servicio => {
+        const nombre = servicio.nombreServicio || 'Desconocido';
+        conteo[nombre] = (conteo[nombre] || 0) + 1;
+      });
+    }
+  });
+  return conteo;
+}
