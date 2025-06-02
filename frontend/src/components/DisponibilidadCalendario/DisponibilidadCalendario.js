@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -27,6 +27,8 @@ const DisponibilidadCalendario = () => {
   const [estilistaSeleccionado, setEstilistaSeleccionado] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [view, setView] = useState('week');
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,6 +106,14 @@ const DisponibilidadCalendario = () => {
     );
   };
 
+  const handleNavigate = (newDate) => {
+    setDate(newDate);
+  };
+
+  const handleViewChange = (newView) => {
+    setView(newView);
+  };
+
   if (loading) return <div className={styles.loading}>Cargando calendario...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
 
@@ -131,7 +141,11 @@ const DisponibilidadCalendario = () => {
           startAccessor="start"
           endAccessor="end"
           style={{ height: 800 }}
-          defaultView="week"
+          view={view}
+          date={date}
+          onView={handleViewChange}
+          onNavigate={handleNavigate}
+          views={['month', 'week', 'day', 'agenda']}
           min={new Date(0, 0, 0, 7, 0, 0)} // 7 AM
           max={new Date(0, 0, 0, 20, 0, 0)} // 8 PM
           eventPropGetter={eventStyleGetter}
@@ -153,7 +167,12 @@ const DisponibilidadCalendario = () => {
             date: 'Fecha',
             time: 'Hora',
             event: 'Evento',
-            noEventsInRange: 'No hay citas en este rango de fechas.'
+            noEventsInRange: 'No hay citas en este rango de fechas.',
+            allDay: 'Todo el día',
+            work_week: 'Semana laboral',
+            yesterday: 'Ayer',
+            tomorrow: 'Mañana',
+            showMore: total => `+ Ver más (${total})`
           }}
         />
       </div>
