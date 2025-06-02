@@ -4,11 +4,8 @@ import React from 'react';
 import CrudCita from './pages/CrudCita.js';
 import ManejoEstilista from './pages/ManejoEstilista';
 import CrudCliente from './pages/CrudCliente';
-<<<<<<< HEAD
 import DisponibilidadPage from './pages/DisponibilidadPage';
-=======
 import Navbar from './components/Navbar'; // <-- Importa el navbar
->>>>>>> c36f91f0fc3cf3b1447b0216944262e4622676f8
 
 function App() {
   return (
