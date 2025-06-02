@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: black;
+  background: #7fb5a1;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.07);
   position: sticky;

@@ -27,7 +27,22 @@ export default function Reportes() {
       {
         label: `Total por mes (${anioSeleccionado})`,
         data: totalesPorMes,
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        backgroundColor: [
+          '#ffd6e0', // rosa pastel
+          '#ffe5b4', // durazno pastel
+          '#fffac8', // amarillo pastel
+          '#d0f4de', // verde menta pastel
+          '#b5ead7', // verde agua pastel
+          '#c7ceea', // azul pastel
+          '#b5d0ff', // celeste pastel
+          '#e2f0cb', // verde claro pastel
+          '#f3c6e8', // lila pastel
+          '#f7d6e0', // rosa claro pastel
+          '#f9e2ae', // amarillo claro pastel
+          '#e0c3fc', // violeta pastel
+        ],
+        borderColor: '#fff',
+        borderWidth: 2,
       },
     ],
   };
@@ -41,18 +56,35 @@ export default function Reportes() {
       {
         data: Object.values(serviciosPorAnio),
         backgroundColor: [
-          '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'
+          '#ffd6e0', // rosa pastel
+          '#ffe5b4', // durazno pastel
+          '#fffac8', // amarillo pastel
+          '#d0f4de', // verde menta pastel
+          '#b5ead7', // verde agua pastel
+          '#c7ceea', // azul pastel
+          '#b5d0ff', // celeste pastel
+          '#e2f0cb', // verde claro pastel
+          '#f3c6e8', // lila pastel
+          '#f7d6e0', // rosa claro pastel
+          '#f9e2ae', // amarillo claro pastel
+          '#e0c3fc', // violeta pastel
         ],
+        borderColor: '#fff',
+        borderWidth: 2,
       },
     ],
   };
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center">Reportes Anuales</h2>
-      <div className="mb-3">
-        <label>Año:&nbsp;</label>
-        <select value={anioSeleccionado} onChange={e => setAnioSeleccionado(Number(e.target.value))}>
+      <h2 className="mb-4 text-center"><strong>REPORTES ANUALES</strong></h2>
+      <div className="mb-3" style={{ textAlign: 'center' }}>
+        <label className="selector-anio-label">Año:</label>
+        <select
+          className="selector-anio"
+          value={anioSeleccionado}
+          onChange={e => setAnioSeleccionado(Number(e.target.value))}
+        >
           {aniosDisponibles.map(anio => (
             <option key={anio} value={anio}>{anio}</option>
           ))}
@@ -61,12 +93,12 @@ export default function Reportes() {
       <div
         className="resumen-anual"
         style={{
-          background: '#f5f6fa',
+          background: '#ffd6e0',
           borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+          boxShadow: '0 2px 8px rgba(234, 52, 52, 0.07)',
           padding: '1.5rem 1rem',
           marginBottom: '2rem',
-          maxWidth: '800px',
+          maxWidth: '1200px',
           marginLeft: 'auto',
           marginRight: 'auto',
           fontSize: '1.3rem',

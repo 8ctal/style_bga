@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+body, .App {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -64,15 +70,40 @@
 }
 
 .resumen-anual {
-  background: #f5f6fa;
+  background: #7fb5a1;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   padding: 1.5rem 1rem;
   margin-bottom: 2rem;
-  max-width: 800px;
+  max-width: 2000px;      /* <-- Más ancho */
   margin-left: auto;
   margin-right: auto;
   font-size: 1.3rem;
   font-weight: bold;
   text-align: center;
+  color: #000000;            /* <-- Texto blanco para mejor contraste */
+}
+
+.selector-anio-label {
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+}
+
+.selector-anio {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #bfc9d9;
+  background: #f5f6fa;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #2d3a4a;
+  outline: none;
+  transition: border 0.2s;
+  box-shadow: 0 1px 4px rgba(54,162,235,0.07);
+}
+
+.selector-anio:focus {
+  border: 1.5px solid #36A2EB;
+  background: #eaf6ff;
 }
