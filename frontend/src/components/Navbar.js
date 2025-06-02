@@ -27,6 +27,11 @@ export default function Navbar() {
             Clientes
           </NavLink>
         </li>
+                <li>
+          <NavLink to="/reportes" className={({ isActive }) => isActive ? styles.active : ''}>
+            Reportes
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );

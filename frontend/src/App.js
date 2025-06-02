@@ -5,6 +5,7 @@ import CrudCita from './pages/CrudCita.js';
 import ManejoEstilista from './pages/ManejoEstilista';
 import CrudCliente from './pages/CrudCliente';
 import Navbar from './components/Navbar'; // <-- Importa el navbar
+import Reportes from './pages/Reportes';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/estilistas" element={<ManejoEstilista />} />
           <Route path="/clientes" element={<CrudCliente />} />
           <Route path="/servicios" element={<div>Página de Servicios</div>} />
+          <Route path="/reportes" element={<Reportes />} />
           <Route path="*" element={<div>404 - Página no encontrada</div>} />
         </Routes>
       </div>
