@@ -48,7 +48,7 @@ export default function Reportes() {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center">Reporte de Ingresos por Mes</h2>
+      <h2 className="mb-4 text-center">Reportes Anuales</h2>
       <div className="mb-3">
         <label>Seleccionar año:&nbsp;</label>
         <select value={anioSeleccionado} onChange={e => setAnioSeleccionado(Number(e.target.value))}>
@@ -57,9 +57,16 @@ export default function Reportes() {
           ))}
         </select>
       </div>
-      <Bar data={dataBar} className="mb-5" />
-      <h2 className="mb-4 text-center">Porcentaje de Servicios Solicitados</h2>
-      <Pie data={dataPie} />
+      <div className="graficos-container">
+        <div className="grafico grafico-barra">
+          <h5 className="text-center">Ingresos por Mes</h5>
+          <Bar data={dataBar} />
+        </div>
+        <div className="grafico">
+          <h5 className="text-center">Porcentaje de Servicios</h5>
+          <Pie data={dataPie} />
+        </div>
+      </div>
     </div>
   );
 }
