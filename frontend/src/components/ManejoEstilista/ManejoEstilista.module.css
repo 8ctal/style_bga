@@ -291,3 +291,25 @@
   font-weight: 700;
   letter-spacing: 0.5px;
 }
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.buttonInfo {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.buttonInfo:hover {
+  background-color: #2980b9;
+}

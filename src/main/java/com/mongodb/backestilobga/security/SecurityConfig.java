@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/citas/**").permitAll()
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/api/servicios/**").permitAll()
+                        .requestMatchers("/api/disponibilidad/**").permitAll()
                         .requestMatchers(req -> req.getMethod().equals("OPTIONS")).permitAll()
                         .anyRequest().authenticated() // Cualquier otra ruta NO especificada arriba requerirá autenticación
                 )

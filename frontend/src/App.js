@@ -6,6 +6,7 @@ import ManejoEstilista from './pages/ManejoEstilista';
 import CrudCliente from './pages/CrudCliente';
 import Navbar from './components/Navbar'; // <-- Importa el navbar
 import Reportes from './pages/Reportes';
+import DisponibilidadEstilista from './components/DisponibilidadEstilista/DisponibilidadEstilista';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/clientes" element={<CrudCliente />} />
           <Route path="/servicios" element={<div>Página de Servicios</div>} />
           <Route path="/reportes" element={<Reportes />} />
+          <Route path="/disponibilidad/:estilistaId" element={<DisponibilidadEstilista />} />
           <Route path="*" element={<div>404 - Página no encontrada</div>} />
         </Routes>
       </div>
