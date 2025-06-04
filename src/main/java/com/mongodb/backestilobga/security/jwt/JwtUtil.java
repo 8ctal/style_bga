@@ -67,6 +67,7 @@ public class JwtUtil {
         claims.put("rol", usuario.getRol().name());
         claims.put("nombres", usuario.getNombres());
         claims.put("apellidos", usuario.getApellidos());
+        claims.put("idUsuario", usuario.getIdUsuario());
         
         return createToken(claims, userDetails.getUsername());
     }

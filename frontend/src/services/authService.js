@@ -37,7 +37,8 @@ export const authService = {
                 correo: credentials.correo,
                 rol: decodedToken.rol,
                 nombres: decodedToken.nombres,
-                apellidos: decodedToken.apellidos
+                apellidos: decodedToken.apellidos,
+                idUsuario: decodedToken.idUsuario
             };
             
             console.log('Datos del usuario a guardar:', JSON.stringify(userData, null, 2));
