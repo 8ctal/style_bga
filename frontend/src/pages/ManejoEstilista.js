@@ -1,197 +1,196 @@
 import React, { useState, useEffect } from 'react';
 import { getEstilistas, getEstilistaById, agregarEstilista, editarEstilista, eliminarEstilista } from '../services/estilistaServicio';
+import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import EstilistaFormulario from '../components/ManejoEstilista/EstilistaFormulario/EstilistaFormulario';
 import EstilistaTabla from '../components/ManejoEstilista/EstilistaTabla/EstilistaTabla';
 import styles from '../components/ManejoEstilista/ManejoEstilista.module.css';
 
 const ManejoEstilista = () => {
-  const [stylists, setStylists] = useState([]);
-  const [currentStylist, setCurrentStylist] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [estilistas, setEstilistas] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [estilistaActual, setEstilistaActual] = useState({
+    nombres: '',
+    apellidos: '',
+    numeroDocumento: '',
+    correoElectronico: '',
+    password: '',
+    celular: ''
+  });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  // Cargar estilistas al inicializar
+  const loadStylists = async () => {
+    try {
+      const response = await getEstilistas();
+      console.log('Estilistas cargados en el componente:', response);
+      setEstilistas(response.data || []);
+    } catch (error) {
+      console.error('Error al cargar estilistas:', error);
+      setError('Error al cargar los estilistas');
+    }
+  };
+
   useEffect(() => {
     loadStylists();
   }, []);
 
-  const showSuccess = (message) => {
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(''), 3000);
-  };
-
-  const loadStylists = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      setLoading(true);
-      setError('');
-      const estilistas = await getEstilistas();
-      console.log('Estilistas cargados en el componente:', estilistas); // Debug
-      setStylists(estilistas);
-    } catch (err) {
-      setError('Error al cargar los estilistas. Por favor, intente de nuevo más tarde.');
-      console.error('Error al cargar estilistas:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async (stylistData) => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      if (isEditing) {
-        await editarEstilista(stylistData);
-        showSuccess('Estilista actualizado exitosamente');
+      if (estilistaActual.idUsuario) {
+        await editarEstilista(estilistaActual);
+        setSuccess('Estilista actualizado exitosamente');
       } else {
-        await agregarEstilista(stylistData);
-        showSuccess('Estilista creado exitosamente');
+        await agregarEstilista(estilistaActual);
+        setSuccess('Estilista agregado exitosamente');
       }
-      
-      await loadStylists();
-      handleCancel();
-    } catch (err) {
-      setError('Error al guardar el estilista. Por favor, intente de nuevo.');
-      console.error('Error al guardar estilista:', err);
-    } finally {
-      setLoading(false);
+      setShowModal(false);
+      loadStylists();
+    } catch (error) {
+      console.error('Error al guardar estilista:', error);
+      setError('Error al guardar el estilista');
     }
-  };
-
-  const handleOpenModal = () => {
-    setCurrentStylist(null);
-    setIsEditing(false);
-    setShowModal(true);
-  };
-
-  const handleEdit = async (id) => {
-    try {
-      setLoading(true);
-      setError('');
-      const estilista = await getEstilistaById(id);
-      setCurrentStylist(estilista);
-      setIsEditing(true);
-      setShowModal(true); // <-- Abrir modal al editar
-    } catch (err) {
-      setError('Error al cargar el estilista para editar.');
-      console.error('Error al cargar estilista:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setCurrentStylist(null);
-    setIsEditing(false);
-    setShowModal(false); // <-- Cerrar modal
   };
 
   const handleDelete = async (id) => {
-    if (!id) {
-      console.error('No hay ID de estilista para eliminar');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError('');
-      console.log('Eliminando estilista:', id);
-      
-      const success = await eliminarEstilista(id);
-      
-      if (success) {
-        // Actualizar el estado local eliminando el estilista
-        setStylists(prevStylists => 
-          prevStylists.filter(stylist => stylist.idUsuario !== id)
-        );
-        
-        showSuccess('Estilista eliminado exitosamente');
-
-        // Recargar la lista completa para asegurar sincronización con el backend
-        await loadStylists();
-      } else {
-        throw new Error('La eliminación no fue exitosa');
+    if (window.confirm('¿Está seguro de eliminar este estilista?')) {
+      try {
+        await eliminarEstilista(id);
+        setSuccess('Estilista eliminado exitosamente');
+        loadStylists();
+      } catch (error) {
+        console.error('Error al eliminar estilista:', error);
+        setError('Error al eliminar el estilista');
       }
-    } catch (err) {
-      console.error('Error en handleDelete:', err);
-      setError(err.response?.data?.message || 'Error al eliminar el estilista. Por favor, intente de nuevo.');
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loadingMessage}>
-          <div className={styles.spinner}></div>
-          <p>Cargando...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleEdit = (estilista) => {
+    setEstilistaActual(estilista);
+    setShowModal(true);
+  };
 
   return (
-    <div className={styles.container}>
-      <header>
-        <h1 className={styles.headerTitle}>Gestión de Estilistas</h1>
-      </header>
+    <div className="container mt-4">
+      <h2>Gestión de Estilistas</h2>
+      
+      {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
+      {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
 
-      {error && (
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
-      )}
+      <Button variant="primary" className="mb-3" onClick={() => {
+        setEstilistaActual({
+          nombres: '',
+          apellidos: '',
+          numeroDocumento: '',
+          correoElectronico: '',
+          password: '',
+          celular: ''
+        });
+        setShowModal(true);
+      }}>
+        Agregar Estilista
+      </Button>
 
-      {successMessage && (
-        <div className={styles.toastSuccess}>
-          {successMessage}
-        </div>
-      )}
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Documento</th>
+            <th>Correo</th>
+            <th>Celular</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {estilistas.map((estilista) => (
+            <tr key={estilista.idUsuario}>
+              <td>{estilista.nombres}</td>
+              <td>{estilista.apellidos}</td>
+              <td>{estilista.numeroDocumento}</td>
+              <td>{estilista.correoElectronico}</td>
+              <td>{estilista.celular}</td>
+              <td>
+                <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(estilista)}>
+                  Editar
+                </Button>
+                <Button variant="danger" size="sm" onClick={() => handleDelete(estilista.idUsuario)}>
+                  Eliminar
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
-      <main>
-        <button
-          className={styles.buttonPrimary}
-          style={{ marginBottom: '1rem', fontSize: '1.1rem', padding: '0.7rem 2rem', borderRadius: '2rem' }}
-          onClick={handleOpenModal}
-        >
-          Agendar Estilista
-        </button>
-
-        {/* Modal */}
-        {showModal && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-              <button
-                className={styles.closeButton}
-                onClick={handleCancel}
-                aria-label="Cerrar"
-                type="button"
-              >
-                &times;
-              </button>
-              <EstilistaFormulario
-                stylist={currentStylist}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                isEditing={isEditing}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{estilistaActual.idUsuario ? 'Editar Estilista' : 'Agregar Estilista'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Nombres</Form.Label>
+              <Form.Control
+                type="text"
+                value={estilistaActual.nombres}
+                onChange={(e) => setEstilistaActual({...estilistaActual, nombres: e.target.value})}
+                required
               />
-            </div>
-          </div>
-        )}
-
-        <EstilistaTabla
-          stylists={stylists}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
-      </main>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Apellidos</Form.Label>
+              <Form.Control
+                type="text"
+                value={estilistaActual.apellidos}
+                onChange={(e) => setEstilistaActual({...estilistaActual, apellidos: e.target.value})}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Número de Documento</Form.Label>
+              <Form.Control
+                type="text"
+                value={estilistaActual.numeroDocumento}
+                onChange={(e) => setEstilistaActual({...estilistaActual, numeroDocumento: e.target.value})}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Correo Electrónico</Form.Label>
+              <Form.Control
+                type="email"
+                value={estilistaActual.correoElectronico}
+                onChange={(e) => setEstilistaActual({...estilistaActual, correoElectronico: e.target.value})}
+                required
+              />
+            </Form.Group>
+            {!estilistaActual.idUsuario && (
+              <Form.Group className="mb-3">
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={estilistaActual.password}
+                  onChange={(e) => setEstilistaActual({...estilistaActual, password: e.target.value})}
+                  required
+                />
+              </Form.Group>
+            )}
+            <Form.Group className="mb-3">
+              <Form.Label>Celular</Form.Label>
+              <Form.Control
+                type="text"
+                value={estilistaActual.celular}
+                onChange={(e) => setEstilistaActual({...estilistaActual, celular: e.target.value})}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              {estilistaActual.idUsuario ? 'Actualizar' : 'Agregar'}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

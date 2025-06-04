@@ -1,16 +1,21 @@
 package com.mongodb.backestilobga.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import com.mongodb.backestilobga.modelo.Usuario;
+import com.mongodb.backestilobga.repositorio.UsuarioRepositorio;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
@@ -20,6 +25,9 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}") // Tiempo de expiración del token en milisegundos
     private Long tiempoExpiracion;
+
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     // Metodo para extraer el nombre de usuario (correo electrónico) del token
     public String extractUsername(String token) {
@@ -50,7 +58,16 @@ public class JwtUtil {
     // Metodo para generar el token para un usuario
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        // Aquí puedes agregar más información (claims) al token si es necesario, por ejemplo, roles
+        
+        // Obtener el usuario completo de la base de datos
+        Usuario usuario = usuarioRepositorio.findByCorreoElectronico(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Agregar información adicional al token
+        claims.put("rol", usuario.getRol().name());
+        claims.put("nombres", usuario.getNombres());
+        claims.put("apellidos", usuario.getApellidos());
+        
         return createToken(claims, userDetails.getUsername());
     }
 

@@ -1,43 +1,53 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../services/authService';
 import styles from './Navbar.module.css';
 
-export default function Navbar() {
-  return (
-    <nav className={styles.navbar}>
-      <div className={styles.logo}>EstiloBGA</div>
-      <ul className={styles.navLinks}>
-        <li>
-          <NavLink to="/" className={({ isActive }) => isActive ? styles.active : ''} end>
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/citas" className={({ isActive }) => isActive ? styles.active : ''}>
-            Citas
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/estilistas" className={({ isActive }) => isActive ? styles.active : ''}>
-            Estilistas
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/clientes" className={({ isActive }) => isActive ? styles.active : ''}>
-            Clientes
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/reportes" className={({ isActive }) => isActive ? styles.active : ''}>
-            Reportes
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/disponibilidad/1" className={({ isActive }) => isActive ? styles.active : ''}>
-            Disponibilidad
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
-  );
-}
+const Navbar = () => {
+    const navigate = useNavigate();
+    const user = authService.getCurrentUser();
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
+
+    if (!user) {
+        return null; // No mostrar navbar en login/register
+    }
+
+    return (
+        <nav className={styles.navbar}>
+            <div className={styles.navBrand}>
+                <Link to="/">EstiloBGA</Link>
+            </div>
+            <div className={styles.navLinks}>
+                {user.rol === 'admin' && (
+                    <>
+                        <Link to="/clientes">Clientes</Link>
+                        <Link to="/estilistas">Estilistas</Link>
+                        <Link to="/servicios">Servicios</Link>
+                        <Link to="/reportes">Reportes</Link>
+                    </>
+                )}
+                {user.rol === 'estilista' && (
+                    <>
+                        <Link to="/citas">Mis Citas</Link>
+                        <Link to="/disponibilidad">Mi Disponibilidad</Link>
+                    </>
+                )}
+                {user.rol === 'cliente' && (
+                    <>
+                        <Link to="/citas">Mis Citas</Link>
+                        <Link to="/disponibilidad">Agendar Cita</Link>
+                    </>
+                )}
+                <button onClick={handleLogout} className={styles.logoutButton}>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+    );
+};
+
+export default Navbar;
