@@ -104,7 +104,7 @@ export default function Login() {
             id="correo"
             label="Correo Electrónico"
             name="correo"
-            autoComplete="username"
+            autoComplete="email"
             autoFocus
             value={credentials.correo}
             onChange={handleChange}
@@ -128,33 +128,12 @@ export default function Login() {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt: 2, mb: 1, fontWeight: 600, fontSize: '1rem' }}
+            sx={{ mt: 2, mb: 2, borderRadius: 3, fontWeight: 600 }}
             disabled={loading}
           >
-            Iniciar Sesión
+            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </Button>
         </Box>
-        <Divider sx={{ my: 2 }}>o</Divider>
-        <Stack spacing={1}>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<GoogleIcon />}
-            onClick={() => alert('Funcionalidad no implementada')}
-            disabled={loading}
-          >
-            Iniciar con Google
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<FacebookIcon />}
-            onClick={() => alert('Funcionalidad no implementada')}
-            disabled={loading}
-          >
-            Iniciar con Facebook
-          </Button>
-        </Stack>
         <Typography sx={{ textAlign: 'center', mt: 2 }}>
           ¿No tienes cuenta?{' '}
           <Link component="button" type="button" onClick={() => navigate('/register')}>

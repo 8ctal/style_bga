@@ -24,57 +24,25 @@
 }
 
 .buttonPrimary {
-  background: linear-gradient(90deg, #232323 60%, #444 100%);
-  color: #fff;
-  border: none;
-  border-radius: 2rem;
-  padding: 0.7rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #d1d5db;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.buttonPrimary:hover {
-  background: linear-gradient(90deg, #444 0%, #232323 100%);
-  box-shadow: 0 4px 16px #a1a1aa;
+  composes: button;
+  background-color: #000000;
+  color: white;
 }
 
 .buttonSecondary {
-  background: #fff;
-  color: #232323;
-  border: 1.5px solid #d1d5db;
-  border-radius: 2rem;
-  padding: 0.5rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.buttonSecondary:hover {
-  background: #e5e7eb;
-  color: #111827;
+  composes: button;
+  background-color: #6c757d;
+  color: white;
 }
 
 .buttonDanger {
-  background: #fff;
-  color: #B91C1C;
-  border: 1.5px solid #d1d5db;
-  border-radius: 2rem;
-  padding: 0.5rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.buttonDanger:hover {
-  background: #B91C1C;
-  color: #fff;
+  composes: button;
+  background-color: #dc3545;
+  color: white;
 }
 
 .button:hover {
-  opacity: 0.95;
+  opacity: 0.9;
   transform: translateY(-1px);
 }
 
@@ -293,9 +261,42 @@
 
 .actionButtons {
   display: flex;
-  gap: 8px;
-  justify-content: flex-start;
-  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.editButton {
+  background: linear-gradient(90deg, #232323 60%, #444 100%);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #d1d5db;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-right: 0.5rem;
+}
+
+.editButton:hover {
+  background: linear-gradient(90deg, #444 0%, #232323 100%);
+  box-shadow: 0 4px 16px #a1a1aa;
+}
+
+.deleteButton {
+  background: #fff;
+  color: #B91C1C;
+  border: 1.5px solid #d1d5db;
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.deleteButton:hover {
+  background: #B91C1C;
+  color: #fff;
 }
 
 .buttonInfo {

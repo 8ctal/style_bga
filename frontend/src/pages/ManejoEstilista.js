@@ -3,7 +3,7 @@ import { getEstilistas, getEstilistaById, agregarEstilista, editarEstilista, eli
 import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import EstilistaFormulario from '../components/ManejoEstilista/EstilistaFormulario/EstilistaFormulario';
 import EstilistaTabla from '../components/ManejoEstilista/EstilistaTabla/EstilistaTabla';
-import styles from '../components/ManejoEstilista/ManejoEstilista.module.css';
+import styles from '../components/Cliente.module.css';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -81,50 +81,57 @@ const ManejoEstilista = () => {
         <h2 style={{ color: '#232946' }}>Gestión de Estilistas</h2>
         {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
         {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
-        <Button variant="primary" className="mb-3" onClick={() => {
-          setEstilistaActual({
-            nombres: '',
-            apellidos: '',
-            numeroDocumento: '',
-            correoElectronico: '',
-            password: '',
-            celular: ''
-          });
-          setShowModal(true);
-        }}>
+        <button
+          className={styles.buttonPrimary}
+          onClick={() => {
+            setEstilistaActual({
+              nombres: '',
+              apellidos: '',
+              numeroDocumento: '',
+              correoElectronico: '',
+              password: '',
+              celular: ''
+            });
+            setShowModal(true);
+          }}
+        >
           Agregar Estilista
-        </Button>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Nombres</th>
-              <th>Apellidos</th>
-              <th>Documento</th>
-              <th>Correo</th>
-              <th>Celular</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estilistas.map((estilista) => (
-              <tr key={estilista.idUsuario}>
-                <td>{estilista.nombres}</td>
-                <td>{estilista.apellidos}</td>
-                <td>{estilista.numeroDocumento}</td>
-                <td>{estilista.correoElectronico}</td>
-                <td>{estilista.celular}</td>
-                <td>
-                  <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(estilista)}>
-                    Editar
-                  </Button>
-                  <Button variant="danger" size="sm" onClick={() => handleDelete(estilista.idUsuario)}>
-                    Eliminar
-                  </Button>
-                </td>
+        </button>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.tableHeader}>Nombres</th>
+                <th className={styles.tableHeader}>Apellidos</th>
+                <th className={styles.tableHeader}>Documento</th>
+                <th className={styles.tableHeader}>Correo</th>
+                <th className={styles.tableHeader}>Celular</th>
+                <th className={styles.tableHeader}>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {estilistas.map((estilista) => (
+                <tr key={estilista.idUsuario} className={styles.tableRow}>
+                  <td className={styles.tableCell}>{estilista.nombres}</td>
+                  <td className={styles.tableCell}>{estilista.apellidos}</td>
+                  <td className={styles.tableCell}>{estilista.numeroDocumento}</td>
+                  <td className={styles.tableCell}>{estilista.correoElectronico}</td>
+                  <td className={styles.tableCell}>{estilista.celular}</td>
+                  <td className={styles.tableCell}>
+                    <div className={styles.actionButtons}>
+                      <button className={styles.editButton} onClick={() => handleEdit(estilista)}>
+                        ✏️ Editar
+                      </button>
+                      <button className={styles.deleteButton} onClick={() => handleDelete(estilista.idUsuario)}>
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>{estilistaActual.idUsuario ? 'Editar Estilista' : 'Agregar Estilista'}</Modal.Title>

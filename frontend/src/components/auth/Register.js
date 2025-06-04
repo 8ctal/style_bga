@@ -157,47 +157,21 @@ export default function Register() {
             id="celular"
             label="Celular"
             name="celular"
-            autoComplete="tel"
             value={userData.celular}
             onChange={handleChange}
             disabled={loading}
-          />
-          <FormControlLabel
-            control={<Checkbox color="primary" disabled />}
-            label="Acepto los términos y condiciones"
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt: 2, mb: 1, fontWeight: 600, fontSize: '1rem' }}
+            sx={{ mt: 2, mb: 2, borderRadius: 3, fontWeight: 600 }}
             disabled={loading}
           >
-            Registrarse
+            {loading ? 'Registrando...' : 'Registrarse'}
           </Button>
         </Box>
-        <Divider sx={{ my: 2 }}>o</Divider>
-        <Stack spacing={1}>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10" fill="#EA4335" /></svg>}
-            onClick={() => alert('Funcionalidad no implementada')}
-            disabled={loading}
-          >
-            Registrarse con Google
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10" fill="#1877F3" /></svg>}
-            onClick={() => alert('Funcionalidad no implementada')}
-            disabled={loading}
-          >
-            Registrarse con Facebook
-          </Button>
-        </Stack>
         <Typography sx={{ textAlign: 'center', mt: 2 }}>
           ¿Ya tienes cuenta?{' '}
           <Link component="button" type="button" onClick={() => navigate('/login')}>

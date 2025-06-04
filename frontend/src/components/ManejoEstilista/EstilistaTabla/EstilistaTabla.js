@@ -1,7 +1,7 @@
 // components/EstilistaTabla.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../ManejoEstilista.module.css';
+import styles from '../../Cliente.module.css';
 
 const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSearchChange }) => {
   const navigate = useNavigate();
@@ -49,17 +49,17 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
   return (
     <section className={styles.card}>
       <div className={styles.flexBetween}>
-        <h2 className={styles.formTitle}>Lista de Estilistas</h2>
+        <h2>Lista de Estilistas</h2>
         <div className={styles.badge}>
           {filteredStylists.length} estilista{filteredStylists.length !== 1 ? 's' : ''} encontrado{filteredStylists.length !== 1 ? 's' : ''}
         </div>
       </div>
       
-      <div className="mb-4">
+      <div className={styles.searchContainer}>
         <input
           type="text"
-          className="form-control"
-          placeholder="Buscar por nombre, apellido, especialidad, correo, teléfono o cédula..."
+          className={styles.searchInput}
+          placeholder="Buscar estilista por nombre, apellido, documento, correo, celular, etc..."
           value={searchTerm}
           onChange={handleSearchChange}
         />

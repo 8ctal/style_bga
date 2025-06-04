@@ -310,7 +310,7 @@ const EstilistaFormulario = ({ stylist, onSave, onCancel, isEditing }) => {
           )}
           <button 
             type="submit" 
-            className={styles.buttonPrimary}
+            className={styles.editButton}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar')}
