@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { agregarCita, editarCita, getClientes, getEstilistas } from '../services/citaService';
+import { authService } from '../services/authService';
 import styles from './ManejoCitas.module.css';
 
 export default function CitaForm({ onSave, citaSeleccionada }) {
+  const currentUser = authService.getCurrentUser();
+  const dataLoaded = useRef(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
   const [formData, setFormData] = useState({
-    clienteId: '',
-    estilistaId: '',
+    clienteId: currentUser.rol === 'cliente' ? currentUser.idUsuario : '',
+    estilistaId: currentUser.rol === 'estilista' ? currentUser.idUsuario : '',
     fechaCita: '',
     horarioAsignado: { 
       diaSemana: '', 
@@ -28,31 +33,52 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
     }
   });
 
+  console.log('Initial Form Data:', formData);
+
   const [clientes, setClientes] = useState([]);
   const [estilistas, setEstilistas] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [clientesRes, estlistasRes] = await Promise.all([
-          getClientes(),
-          getEstilistas()
-        ]);
-        setClientes(clientesRes.data);
-        setEstilistas(estlistasRes.data);
-      } catch (err) {
-        setError('Error al cargar los datos necesarios. Por favor, intente de nuevo.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = useCallback(async () => {
+    if (loading || dataLoaded.current) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const [clientesRes, estlistasRes] = await Promise.all([
+        getClientes(),
+        getEstilistas()
+      ]);
+      setClientes(clientesRes.data);
+      setEstilistas(estlistasRes.data);
 
+      // Si el usuario es estilista, encontrar su ID en la lista de estilistas
+      if (currentUser.rol === 'estilista') {
+        const estilistaActual = estlistasRes.data.find(
+          e => e.correoElectronico === currentUser.correo
+        );
+        if (estilistaActual) {
+          console.log('Estilista encontrado:', estilistaActual);
+          setFormData(prev => ({
+            ...prev,
+            estilistaId: estilistaActual.idUsuario
+          }));
+        } else {
+          console.error('No se encontró el estilista actual en la lista');
+        }
+      }
+      dataLoaded.current = true;
+    } catch (err) {
+      setError('Error al cargar los datos necesarios. Por favor, intente de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser.correo, currentUser.rol]);
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     if (citaSeleccionada) {
@@ -91,7 +117,7 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
     }
   }, [citaSeleccionada]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     if (name.includes("pago.")) {
       const key = name.split(".")[1];
@@ -129,12 +155,15 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
-  };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage('');
     setLoading(true);
+
+    console.log('Submitting form data:', formData); // Debug log
 
     try {
       // Validaciones básicas
@@ -193,11 +222,42 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
       
       if (citaSeleccionada) {
         await editarCita(citaData);
+        setSuccessMessage('Cita actualizada exitosamente');
       } else {
         await agregarCita(citaData);
+        setSuccessMessage('Cita creada exitosamente');
       }
       
+      // Limpiar el formulario después de guardar
+      setFormData({
+        clienteId: currentUser.rol === 'cliente' ? currentUser.idUsuario : '',
+        estilistaId: currentUser.rol === 'estilista' ? currentUser.idUsuario : '',
+        fechaCita: '',
+        horarioAsignado: { diaSemana: '', intervalo: '' },
+        servicios: [{
+          servicioId: '',
+          nombreServicio: '',
+          condicionesPrevias: '',
+          precioServicio: 0,
+          tiempoEstimadoServicio: 60,
+          promocion: false
+        }],
+        estado: 'pendiente',
+        pago: {
+          fechaPago: new Date().toISOString(),
+          totalPagado: 0,
+          metodoPago: '',
+          estadoPago: 'pendiente'
+        }
+      });
+
+      // Notificar al componente padre para actualizar la lista
       onSave();
+      
+      // Ocultar el mensaje de éxito después de 3 segundos
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
     } catch (err) {
       console.error('Error al guardar la cita:', err);
       setError(err.message || 'Error al guardar la cita. Por favor, intente de nuevo.');
@@ -220,6 +280,12 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
         </div>
       )}
 
+      {successMessage && (
+        <div className={styles.successMessage}>
+          {successMessage}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6 mb-3">
@@ -229,7 +295,7 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
               className={styles.formInput}
               value={formData.clienteId} 
               onChange={handleChange}
-              disabled={loading}
+              disabled={loading || currentUser.rol === 'cliente'}
             >
               <option value="">Seleccione un cliente</option>
               {clientes.map(c => (
@@ -247,7 +313,7 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
               className={styles.formInput}
               value={formData.estilistaId} 
               onChange={handleChange}
-              disabled={loading}
+              disabled={loading || currentUser.rol === 'estilista'}
             >
               <option value="">Seleccione un estilista</option>
               {estilistas.map(e => (

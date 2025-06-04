@@ -1,29 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { getCitas, eliminarCita } from '../services/citaService';
+import { authService } from '../services/authService';
 import styles from './ManejoCitas.module.css';
 
-export default function CitaList({ onEdit }) {
+export default function CitaList({ onEdit, refreshTrigger }) {
   const [citas, setCitas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const currentUser = authService.getCurrentUser();
 
-  const cargarCitas = () => {
+  const cargarCitas = useCallback(async () => {
     setLoading(true);
-    getCitas().then(res => {
-      setCitas(res.data);
+    try {
+      const res = await getCitas();
+      // Filtrar citas según el rol del usuario
+      const citasFiltradas = res.data.filter(cita => {
+        if (currentUser.rol === 'estilista') {
+          return cita.estilistaId === currentUser.idUsuario;
+        } else if (currentUser.rol === 'cliente') {
+          return cita.clienteId === currentUser.idUsuario;
+        }
+        return true; // Para admin, mostrar todas las citas
+      });
+      setCitas(citasFiltradas);
+    } catch (error) {
+      console.error('Error al cargar citas:', error);
+    } finally {
       setLoading(false);
-    });
-  };
+    }
+  }, [currentUser.rol, currentUser.idUsuario]);
 
   useEffect(() => {
     cargarCitas();
-  }, []);
+  }, [cargarCitas, refreshTrigger]); // Agregamos refreshTrigger como dependencia
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('¿Está seguro que desea eliminar esta cita?')) {
-      eliminarCita(id).then(() => cargarCitas());
+      try {
+        await eliminarCita(id);
+        await cargarCitas(); // Recargar las citas después de eliminar
+      } catch (error) {
+        console.error('Error al eliminar la cita:', error);
+      }
     }
   };
 

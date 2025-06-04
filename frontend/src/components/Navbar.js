@@ -27,6 +27,8 @@ const Navbar = () => {
                         <Link to="/clientes">Clientes</Link>
                         <Link to="/estilistas">Estilistas</Link>
                         <Link to="/servicios">Servicios</Link>
+                        <Link to="/citas">Citas</Link>
+                        <Link to="/disponibilidad">Disponibilidad</Link>
                         <Link to="/reportes">Reportes</Link>
                     </>
                 )}
@@ -38,8 +40,8 @@ const Navbar = () => {
                 )}
                 {user.rol === 'cliente' && (
                     <>
-                        <Link to="/citas">Mis Citas</Link>
-                        <Link to="/disponibilidad">Agendar Cita</Link>
+                        <Link to="/citas">Mis Citas / Agendar Cita</Link>
+                        <Link to="/disponibilidad">Disponibilidad</Link>
                     </>
                 )}
                 <button onClick={handleLogout} className={styles.logoutButton}>
