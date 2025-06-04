@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getCitas, eliminarCita } from '../services/citaService';
+import { getCitas, eliminarCita, actualizarEstadoCita } from '../services/citaService';
 import { authService } from '../services/authService';
 import styles from './ManejoCitas.module.css';
 
@@ -43,6 +43,17 @@ export default function CitaList({ onEdit, refreshTrigger }) {
         await cargarCitas(); // Recargar las citas después de eliminar
       } catch (error) {
         console.error('Error al eliminar la cita:', error);
+      }
+    }
+  };
+
+  const handleEstadoChange = async (id, nuevoEstado) => {
+    if (window.confirm(`¿Está seguro que desea marcar esta cita como ${nuevoEstado.toLowerCase()}?`)) {
+      try {
+        await actualizarEstadoCita(id, nuevoEstado);
+        await cargarCitas(); // Recargar las citas después de actualizar
+      } catch (error) {
+        console.error('Error al actualizar el estado de la cita:', error);
       }
     }
   };
@@ -172,6 +183,22 @@ export default function CitaList({ onEdit, refreshTrigger }) {
                     <td className={styles.tableCell}>${cita.pago?.totalPagado}</td>
                     <td className={styles.tableCell}>
                       <div className={styles.flexBetween}>
+                        {currentUser.rol === 'estilista' && cita.estado?.toLowerCase() === 'pendiente' && (
+                          <>
+                            <button
+                              className={styles.buttonSuccess}
+                              onClick={() => handleEstadoChange(cita.idCita || cita._id, 'completada')}
+                            >
+                              ✅ Completar
+                            </button>
+                            <button
+                              className={styles.buttonDanger}
+                              onClick={() => handleEstadoChange(cita.idCita || cita._id, 'cancelada')}
+                            >
+                              ❌ Cancelar
+                            </button>
+                          </>
+                        )}
                         <button
                           className={styles.buttonPrimary}
                           onClick={() => onEdit(cita)}
