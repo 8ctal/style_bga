@@ -39,3 +39,53 @@ export function contarServiciosPorAnio(citas, year) {
   });
   return conteo;
 }
+
+export function obtenerReporteEstilistas(citas, year) {
+  const reporteEstilistas = {};
+  
+  citas.forEach(cita => {
+    if (!cita.fechaCita || !cita.estilistaInfo || !cita.estilistaId) return;
+    const fecha = new Date(cita.fechaCita);
+    if (fecha.getFullYear() === year && cita.estado?.toLowerCase() === 'completada') {
+      const estilistaId = cita.estilistaId;
+      if (!reporteEstilistas[estilistaId]) {
+        reporteEstilistas[estilistaId] = {
+          id: estilistaId,
+          nombres: cita.estilistaInfo.nombres,
+          apellidos: cita.estilistaInfo.apellidos,
+          citasCompletadas: 0,
+          totalIngresos: 0
+        };
+      }
+      reporteEstilistas[estilistaId].citasCompletadas++;
+      reporteEstilistas[estilistaId].totalIngresos += Number(cita.pago?.totalPagado) || 0;
+    }
+  });
+
+  return Object.values(reporteEstilistas).sort((a, b) => b.totalIngresos - a.totalIngresos);
+}
+
+export function obtenerClientesFrecuentes(citas, year) {
+  const clientesFrecuentes = {};
+  
+  citas.forEach(cita => {
+    if (!cita.fechaCita || !cita.clienteInfo || !cita.clienteId) return;
+    const fecha = new Date(cita.fechaCita);
+    if (fecha.getFullYear() === year && cita.estado?.toLowerCase() === 'completada') {
+      const clienteId = cita.clienteId;
+      if (!clientesFrecuentes[clienteId]) {
+        clientesFrecuentes[clienteId] = {
+          id: clienteId,
+          nombres: cita.clienteInfo.nombres,
+          apellidos: cita.clienteInfo.apellidos,
+          visitas: 0,
+          totalGastado: 0
+        };
+      }
+      clientesFrecuentes[clienteId].visitas++;
+      clientesFrecuentes[clienteId].totalGastado += Number(cita.pago?.totalPagado) || 0;
+    }
+  });
+
+  return Object.values(clientesFrecuentes).sort((a, b) => b.visitas - a.visitas);
+}

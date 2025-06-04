@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getCitas } from '../services/citaService';
-import { agruparTotalesPorMesYCita, obtenerAniosDisponibles, contarServiciosPorAnio } from '../utils/citasReportUtils';
+import { 
+  agruparTotalesPorMesYCita, 
+  obtenerAniosDisponibles, 
+  contarServiciosPorAnio,
+  obtenerReporteEstilistas,
+  obtenerClientesFrecuentes
+} from '../utils/citasReportUtils';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 
@@ -28,18 +34,9 @@ export default function Reportes() {
         label: `Total por mes (${anioSeleccionado})`,
         data: totalesPorMes,
         backgroundColor: [
-          '#ffd6e0', // rosa pastel
-          '#ffe5b4', // durazno pastel
-          '#fffac8', // amarillo pastel
-          '#d0f4de', // verde menta pastel
-          '#b5ead7', // verde agua pastel
-          '#c7ceea', // azul pastel
-          '#b5d0ff', // celeste pastel
-          '#e2f0cb', // verde claro pastel
-          '#f3c6e8', // lila pastel
-          '#f7d6e0', // rosa claro pastel
-          '#f9e2ae', // amarillo claro pastel
-          '#e0c3fc', // violeta pastel
+          '#ffd6e0', '#ffe5b4', '#fffac8', '#d0f4de', '#b5ead7',
+          '#c7ceea', '#b5d0ff', '#e2f0cb', '#f3c6e8', '#f7d6e0',
+          '#f9e2ae', '#e0c3fc',
         ],
         borderColor: '#fff',
         borderWidth: 2,
@@ -56,19 +53,40 @@ export default function Reportes() {
       {
         data: Object.values(serviciosPorAnio),
         backgroundColor: [
-          '#ffd6e0', // rosa pastel
-          '#ffe5b4', // durazno pastel
-          '#fffac8', // amarillo pastel
-          '#d0f4de', // verde menta pastel
-          '#b5ead7', // verde agua pastel
-          '#c7ceea', // azul pastel
-          '#b5d0ff', // celeste pastel
-          '#e2f0cb', // verde claro pastel
-          '#f3c6e8', // lila pastel
-          '#f7d6e0', // rosa claro pastel
-          '#f9e2ae', // amarillo claro pastel
-          '#e0c3fc', // violeta pastel
+          '#ffd6e0', '#ffe5b4', '#fffac8', '#d0f4de', '#b5ead7',
+          '#c7ceea', '#b5d0ff', '#e2f0cb', '#f3c6e8', '#f7d6e0',
+          '#f9e2ae', '#e0c3fc',
         ],
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  // Datos para el reporte de estilistas
+  const reporteEstilistas = obtenerReporteEstilistas(citas, anioSeleccionado);
+  const dataEstilistas = {
+    labels: reporteEstilistas.map(e => `${e.nombres} ${e.apellidos}`),
+    datasets: [
+      {
+        label: 'Ingresos por Estilista',
+        data: reporteEstilistas.map(e => e.totalIngresos),
+        backgroundColor: '#b5d0ff',
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  // Datos para el reporte de clientes frecuentes
+  const clientesFrecuentes = obtenerClientesFrecuentes(citas, anioSeleccionado);
+  const dataClientes = {
+    labels: clientesFrecuentes.map(c => `${c.nombres} ${c.apellidos}`),
+    datasets: [
+      {
+        label: 'Visitas por Cliente',
+        data: clientesFrecuentes.map(c => c.visitas),
+        backgroundColor: '#d0f4de',
         borderColor: '#fff',
         borderWidth: 2,
       },
@@ -90,24 +108,12 @@ export default function Reportes() {
           ))}
         </select>
       </div>
-      <div
-        className="resumen-anual"
-        style={{
-          background: '#ffd6e0',
-          borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(234, 52, 52, 0.07)',
-          padding: '1.5rem 1rem',
-          marginBottom: '2rem',
-          maxWidth: '1200px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          fontSize: '1.3rem',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}
-      >
+
+      {/* Reporte General */}
+      <div className="resumen-anual">
         Total de ingresos en {anioSeleccionado}: ${totalIngresosAnual.toLocaleString('es-CO', {minimumFractionDigits: 2})}
       </div>
+      
       <div className="graficos-container">
         <div className="grafico grafico-barra">
           <h5 className="text-center">Ingresos por Mes</h5>
@@ -116,6 +122,72 @@ export default function Reportes() {
         <div className="grafico">
           <h5 className="text-center">Porcentaje de Servicios</h5>
           <Pie data={dataPie} />
+        </div>
+      </div>
+
+      {/* Reporte de Estilistas */}
+      <div className="mt-5">
+        <h3 className="text-center mb-4">Desempeño de Estilistas</h3>
+        <div className="graficos-container">
+          <div className="grafico grafico-barra">
+            <h5 className="text-center">Ingresos por Estilista</h5>
+            <Bar data={dataEstilistas} />
+          </div>
+          <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>Estilista</th>
+                  <th>Citas Completadas</th>
+                  <th>Total Ingresos</th>
+                  <th>% del Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reporteEstilistas.map(estilista => (
+                  <tr key={estilista.id}>
+                    <td>{estilista.nombres} {estilista.apellidos}</td>
+                    <td>{estilista.citasCompletadas}</td>
+                    <td>${estilista.totalIngresos.toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+                    <td>{((estilista.totalIngresos / totalIngresosAnual) * 100).toFixed(1)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Reporte de Clientes Frecuentes */}
+      <div className="mt-5">
+        <h3 className="text-center mb-4">Clientes Frecuentes</h3>
+        <div className="graficos-container">
+          <div className="grafico grafico-barra">
+            <h5 className="text-center">Visitas por Cliente</h5>
+            <Bar data={dataClientes} />
+          </div>
+          <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Visitas</th>
+                  <th>Total Gastado</th>
+                  <th>Promedio por Visita</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clientesFrecuentes.map(cliente => (
+                  <tr key={cliente.id}>
+                    <td>{cliente.nombres} {cliente.apellidos}</td>
+                    <td>{cliente.visitas}</td>
+                    <td>${cliente.totalGastado.toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+                    <td>${(cliente.totalGastado / cliente.visitas).toLocaleString('es-CO', {minimumFractionDigits: 2})}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
