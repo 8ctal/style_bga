@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { getServicios, getServicioById, agregarServicio, editarServicio, eliminarServicio } from '../services/servicioService';
 import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { useTheme } from '@mui/material/styles';
 
 const ManejoServicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -12,6 +15,7 @@ const ManejoServicios = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const theme = useTheme();
 
   const loadServicios = async () => {
     try {
@@ -65,13 +69,11 @@ const ManejoServicios = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', py: 4, mt: { xs: 7, md: 9 } }}>
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', background: theme => theme.palette.background.default, py: 4, mt: { xs: 7, md: 9 } }}>
       <div className="container mt-4">
-        <h2>Gestión de Servicios</h2>
-        
+        <h2 style={{ color: '#232946' }}>Gestión de Servicios</h2>
         {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
         {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
-
         <Button variant="primary" className="mb-3" onClick={() => {
           setServicioActual({
             nombreServicio: '',
@@ -81,7 +83,6 @@ const ManejoServicios = () => {
         }}>
           Agregar Servicio
         </Button>
-
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -107,7 +108,6 @@ const ManejoServicios = () => {
             ))}
           </tbody>
         </Table>
-
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>{servicioActual.idServicio ? 'Editar Servicio' : 'Agregar Servicio'}</Modal.Title>

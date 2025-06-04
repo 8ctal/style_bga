@@ -10,6 +10,8 @@ import {
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -95,9 +97,9 @@ export default function Reportes() {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', py: 4, mt: { xs: 7, md: 9 } }}>
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', background: theme => theme.palette.background.default, py: 4, mt: { xs: 7, md: 9 } }}>
       <div className="container mt-5">
-        <h2 className="mb-4 text-center"><strong>REPORTES ANUALES</strong></h2>
+        <h2 className="mb-4 text-center" style={{ color: '#232946' }}><strong>REPORTES ANUALES</strong></h2>
         <div className="mb-3" style={{ textAlign: 'center' }}>
           <label className="selector-anio-label">Año:</label>
           <select
@@ -110,12 +112,10 @@ export default function Reportes() {
             ))}
           </select>
         </div>
-
         {/* Reporte General */}
         <div className="resumen-anual">
           Total de ingresos en {anioSeleccionado}: ${totalIngresosAnual.toLocaleString('es-CO', {minimumFractionDigits: 2})}
         </div>
-        
         <div className="graficos-container">
           <div className="grafico grafico-barra">
             <h5 className="text-center">Ingresos por Mes</h5>
@@ -126,7 +126,6 @@ export default function Reportes() {
             <Pie data={dataPie} />
           </div>
         </div>
-
         {/* Reporte de Estilistas */}
         <div className="mt-5">
           <h3 className="text-center mb-4">Desempeño de Estilistas</h3>
@@ -159,7 +158,6 @@ export default function Reportes() {
             </div>
           </div>
         </div>
-
         {/* Reporte de Clientes Frecuentes */}
         <div className="mt-5">
           <h3 className="text-center mb-4">Clientes Frecuentes</h3>

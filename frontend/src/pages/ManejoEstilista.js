@@ -5,6 +5,9 @@ import EstilistaFormulario from '../components/ManejoEstilista/EstilistaFormular
 import EstilistaTabla from '../components/ManejoEstilista/EstilistaTabla/EstilistaTabla';
 import styles from '../components/ManejoEstilista/ManejoEstilista.module.css';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { useTheme } from '@mui/material/styles';
 
 const ManejoEstilista = () => {
   const [estilistas, setEstilistas] = useState([]);
@@ -19,6 +22,7 @@ const ManejoEstilista = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const theme = useTheme();
 
   const loadStylists = async () => {
     try {
@@ -72,13 +76,11 @@ const ManejoEstilista = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', py: 4, mt: { xs: 7, md: 9 } }}>
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', background: theme => theme.palette.background.default, py: 4, mt: { xs: 7, md: 9 } }}>
       <div className="container mt-4">
-        <h2>Gestión de Estilistas</h2>
-        
+        <h2 style={{ color: '#232946' }}>Gestión de Estilistas</h2>
         {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
         {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
-
         <Button variant="primary" className="mb-3" onClick={() => {
           setEstilistaActual({
             nombres: '',
@@ -92,7 +94,6 @@ const ManejoEstilista = () => {
         }}>
           Agregar Estilista
         </Button>
-
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -124,7 +125,6 @@ const ManejoEstilista = () => {
             ))}
           </tbody>
         </Table>
-
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>{estilistaActual.idUsuario ? 'Editar Estilista' : 'Agregar Estilista'}</Modal.Title>
