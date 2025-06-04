@@ -1,8 +1,10 @@
 // components/EstilistaTabla.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../ManejoEstilista.module.css';
 
 const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSearchChange }) => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
@@ -115,13 +117,20 @@ const EstilistaTabla = ({ stylists = [], onEdit, onDelete, searchTerm = '', onSe
                       {stylist.numeroDocumento || 'No especificado'}
                     </td>
                     <td className={styles.tableCell}>
-                      <div className={styles.flexBetween}>
+                      <div className={styles.actionButtons}>
                         <button
                           className={styles.buttonPrimary}
                           onClick={() => onEdit(stylist.idUsuario)}
                           title="Editar estilista"
                         >
                           ✏️ Editar
+                        </button>
+                        <button
+                          className={styles.buttonInfo}
+                          onClick={() => navigate(`/disponibilidad/${stylist.idUsuario}`)}
+                          title="Gestionar disponibilidad"
+                        >
+                          📅 Disponibilidad
                         </button>
                         <button
                           className={styles.buttonDanger}
