@@ -2,7 +2,8 @@ import '../App.css';
 import React, { useState } from 'react';
 import CitaList from '../components/CitaList';
 import CitaForm from '../components/CitaForm';
-
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 
 function CrudCita() {
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
@@ -14,11 +15,17 @@ function CrudCita() {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4 text-center">Gestionar Citas</h1>
-      <CitaForm citaSeleccionada={citaSeleccionada} onSave={handleGuardado} />
-      <CitaList onEdit={setCitaSeleccionada} refreshTrigger={refreshTrigger} />
-    </div>
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', background: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))', py: 4, mt: { xs: 7, md: 9 } }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontWeight: 600 }}>Gestionar Citas</h1>
+      <Grid container spacing={3} justifyContent="center" alignItems="flex-start">
+        <Grid item xs={12} md={6}>
+          <CitaForm citaSeleccionada={citaSeleccionada} onSave={handleGuardado} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CitaList onEdit={setCitaSeleccionada} refreshTrigger={refreshTrigger} />
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 

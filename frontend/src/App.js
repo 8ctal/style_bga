@@ -16,20 +16,12 @@ import DisponibilidadEstilista from './components/DisponibilidadEstilista/Dispon
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children, allowedRoles }) => {
     const user = authService.getCurrentUser();
-    console.log('ProtectedRoute - Usuario:', user);
-    console.log('ProtectedRoute - Roles permitidos:', allowedRoles);
-    
     if (!user) {
-        console.log('ProtectedRoute - No hay usuario, redirigiendo a login');
         return <Navigate to="/login" />;
     }
-
     if (allowedRoles && !allowedRoles.includes(user.rol)) {
-        console.log('ProtectedRoute - Rol no permitido:', user.rol);
         return <Navigate to="/unauthorized" />;
     }
-
-    console.log('ProtectedRoute - Acceso permitido');
     return children;
 };
 
@@ -42,50 +34,42 @@ function App() {
                     {/* Rutas públicas */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    
                     {/* Rutas protegidas */}
                     <Route path="/citas" element={
                         <ProtectedRoute allowedRoles={['admin', 'cliente', 'estilista']}>
                             <CrudCita />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/estilistas" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <ManejoEstilista />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/clientes" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <CrudCliente />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/servicios" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <ManejoServicios />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/reportes" element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <Reportes />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/disponibilidad" element={
                         <ProtectedRoute allowedRoles={['admin', 'cliente', 'estilista']}>
                             <DisponibilidadPage />
                         </ProtectedRoute>
                     } />
-                    
                     <Route path="/disponibilidad/:estilistaId" element={
                         <ProtectedRoute allowedRoles={['admin', 'cliente', 'estilista']}>
                             <DisponibilidadEstilista />
                         </ProtectedRoute>
                     } />
-                    
                     {/* Ruta para acceso no autorizado */}
                     <Route path="/unauthorized" element={
                         <div className="container mt-5">
@@ -93,7 +77,6 @@ function App() {
                             <p>No tienes permisos para acceder a esta página.</p>
                         </div>
                     } />
-                    
                     {/* Ruta por defecto */}
                     <Route path="/" element={<Navigate to="/login" />} />
                 </Routes>

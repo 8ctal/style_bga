@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getServicios, getServicioById, agregarServicio, editarServicio, eliminarServicio } from '../services/servicioService';
 import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
+import Box from '@mui/material/Box';
 
 const ManejoServicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -64,79 +65,81 @@ const ManejoServicios = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Gestión de Servicios</h2>
-      
-      {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
-      {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', py: 4, mt: { xs: 7, md: 9 } }}>
+      <div className="container mt-4">
+        <h2>Gestión de Servicios</h2>
+        
+        {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
+        {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
 
-      <Button variant="primary" className="mb-3" onClick={() => {
-        setServicioActual({
-          nombreServicio: '',
-          condicionesPrevias: ''
-        });
-        setShowModal(true);
-      }}>
-        Agregar Servicio
-      </Button>
+        <Button variant="primary" className="mb-3" onClick={() => {
+          setServicioActual({
+            nombreServicio: '',
+            condicionesPrevias: ''
+          });
+          setShowModal(true);
+        }}>
+          Agregar Servicio
+        </Button>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Nombre del Servicio</th>
-            <th>Condiciones Previas</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {servicios.map((servicio) => (
-            <tr key={servicio.idServicio}>
-              <td>{servicio.nombreServicio}</td>
-              <td>{servicio.condicionesPrevias}</td>
-              <td>
-                <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(servicio)}>
-                  Editar
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(servicio.idServicio)}>
-                  Eliminar
-                </Button>
-              </td>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Nombre del Servicio</th>
+              <th>Condiciones Previas</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {servicios.map((servicio) => (
+              <tr key={servicio.idServicio}>
+                <td>{servicio.nombreServicio}</td>
+                <td>{servicio.condicionesPrevias}</td>
+                <td>
+                  <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(servicio)}>
+                    Editar
+                  </Button>
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(servicio.idServicio)}>
+                    Eliminar
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{servicioActual.idServicio ? 'Editar Servicio' : 'Agregar Servicio'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Nombre del Servicio</Form.Label>
-              <Form.Control
-                type="text"
-                value={servicioActual.nombreServicio}
-                onChange={(e) => setServicioActual({...servicioActual, nombreServicio: e.target.value})}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Condiciones Previas</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={servicioActual.condicionesPrevias}
-                onChange={(e) => setServicioActual({...servicioActual, condicionesPrevias: e.target.value})}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              {servicioActual.idServicio ? 'Actualizar' : 'Agregar'}
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    </div>
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>{servicioActual.idServicio ? 'Editar Servicio' : 'Agregar Servicio'}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Nombre del Servicio</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={servicioActual.nombreServicio}
+                  onChange={(e) => setServicioActual({...servicioActual, nombreServicio: e.target.value})}
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Condiciones Previas</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={servicioActual.condicionesPrevias}
+                  onChange={(e) => setServicioActual({...servicioActual, condicionesPrevias: e.target.value})}
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                {servicioActual.idServicio ? 'Actualizar' : 'Agregar'}
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+      </div>
+    </Box>
   );
 };
 

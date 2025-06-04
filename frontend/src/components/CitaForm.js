@@ -2,6 +2,12 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { agregarCita, editarCita, getClientes, getEstilistas } from '../services/citaService';
 import { authService } from '../services/authService';
 import styles from './ManejoCitas.module.css';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 
 export default function CitaForm({ onSave, citaSeleccionada }) {
   const currentUser = authService.getCurrentUser();
@@ -271,226 +277,230 @@ export default function CitaForm({ onSave, citaSeleccionada }) {
   }
 
   return (
-    <section className={styles.card}>
-      <h2 className={styles.formTitle}>{citaSeleccionada ? 'Editar Cita' : 'Agregar Cita'}</h2>
-      
-      {error && (
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
-      )}
+    <Card sx={{ borderRadius: 3, boxShadow: 3, p: 2, minWidth: 320, maxWidth: 600, mx: 'auto', background: 'white' }}>
+      <CardContent>
+        <Typography variant="h6" align="center" fontWeight={600} gutterBottom>
+          {citaSeleccionada ? 'Editar Cita' : 'Agregar Cita'}
+        </Typography>
+        {error && (
+          <Box sx={{ mb: 2 }}>
+            <Typography color="error" align="center" variant="body2">{error}</Typography>
+          </Box>
+        )}
+        {successMessage && (
+          <Box sx={{ mb: 2 }}>
+            <Typography color="success.main" align="center" variant="body2">{successMessage}</Typography>
+          </Box>
+        )}
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <div className="col-md-6 mb-3">
+              <label className={styles.formLabel}>Cliente</label>
+              <select 
+                name="clienteId" 
+                className={styles.formInput}
+                value={formData.clienteId} 
+                onChange={handleChange}
+                disabled={loading || currentUser.rol === 'cliente'}
+              >
+                <option value="">Seleccione un cliente</option>
+                {clientes.map(c => (
+                  <option key={c.idUsuario} value={c.idUsuario}>
+                    {c.nombres} {c.apellidos}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      {successMessage && (
-        <div className={styles.successMessage}>
-          {successMessage}
-        </div>
-      )}
+            <div className="col-md-6 mb-3">
+              <label className={styles.formLabel}>Estilista</label>
+              <select 
+                name="estilistaId" 
+                className={styles.formInput}
+                value={formData.estilistaId} 
+                onChange={handleChange}
+                disabled={loading || currentUser.rol === 'estilista'}
+              >
+                <option value="">Seleccione un estilista</option>
+                {estilistas.map(e => (
+                  <option key={e.idUsuario} value={e.idUsuario}>
+                    {e.nombres} {e.apellidos}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Cliente</label>
-            <select 
-              name="clienteId" 
-              className={styles.formInput}
-              value={formData.clienteId} 
-              onChange={handleChange}
-              disabled={loading || currentUser.rol === 'cliente'}
-            >
-              <option value="">Seleccione un cliente</option>
-              {clientes.map(c => (
-                <option key={c.idUsuario} value={c.idUsuario}>
-                  {c.nombres} {c.apellidos}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className="col-md-6 mb-3">
+              <label className={styles.formLabel}>Fecha de la cita</label>
+              <input 
+                type="datetime-local" 
+                name="fechaCita" 
+                className={styles.formInput}
+                value={formData.fechaCita} 
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </div>
 
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Estilista</label>
-            <select 
-              name="estilistaId" 
-              className={styles.formInput}
-              value={formData.estilistaId} 
-              onChange={handleChange}
-              disabled={loading || currentUser.rol === 'estilista'}
-            >
-              <option value="">Seleccione un estilista</option>
-              {estilistas.map(e => (
-                <option key={e.idUsuario} value={e.idUsuario}>
-                  {e.nombres} {e.apellidos}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className="col-md-3 mb-3">
+              <label className={styles.formLabel}>Día de la semana</label>
+              <select
+                name="horarioAsignado.diaSemana"
+                className={styles.formInput}
+                value={formData.horarioAsignado.diaSemana}
+                onChange={handleChange}
+                disabled={loading}
+              >
+                <option value="">Seleccione...</option>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+              </select>
+            </div>
 
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Fecha de la cita</label>
-            <input 
-              type="datetime-local" 
-              name="fechaCita" 
-              className={styles.formInput}
-              value={formData.fechaCita} 
-              onChange={handleChange}
-              disabled={loading}
-            />
-          </div>
+            <div className="col-md-3 mb-3">
+              <label className={styles.formLabel}>Intervalo</label>
+              <input 
+                name="horarioAsignado.intervalo" 
+                className={styles.formInput}
+                value={formData.horarioAsignado.intervalo} 
+                onChange={handleChange}
+                placeholder="Ej: 9:00 AM - 10:00 AM"
+                disabled={loading}
+              />
+            </div>
 
-          <div className="col-md-3 mb-3">
-            <label className={styles.formLabel}>Día de la semana</label>
-            <select
-              name="horarioAsignado.diaSemana"
-              className={styles.formInput}
-              value={formData.horarioAsignado.diaSemana}
-              onChange={handleChange}
-              disabled={loading}
-            >
-              <option value="">Seleccione...</option>
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miércoles">Miércoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sábado">Sábado</option>
-              <option value="Domingo">Domingo</option>
-            </select>
-          </div>
+            <div className="col-md-6 mb-3">
+              <label className={styles.formLabel}>Nombre del Servicio</label>
+              <input
+                type="text"
+                name="servicios.nombreServicio"
+                className={styles.formInput}
+                value={formData.servicios[0].nombreServicio}
+                onChange={handleChange}
+                placeholder="Ej: Tinte, Corte, etc."
+                disabled={loading}
+              />
+            </div>
 
-          <div className="col-md-3 mb-3">
-            <label className={styles.formLabel}>Intervalo</label>
-            <input 
-              name="horarioAsignado.intervalo" 
-              className={styles.formInput}
-              value={formData.horarioAsignado.intervalo} 
-              onChange={handleChange}
-              placeholder="Ej: 9:00 AM - 10:00 AM"
-              disabled={loading}
-            />
-          </div>
+            <div className="col-md-6 mb-3">
+              <label className={styles.formLabel}>Condiciones Previas</label>
+              <textarea
+                name="servicios.condicionesPrevias"
+                className={styles.formInput}
+                value={formData.servicios[0].condicionesPrevias}
+                onChange={handleChange}
+                placeholder="Ej: No lavarse el cabello 24h antes"
+                disabled={loading}
+                rows="2"
+              />
+            </div>
 
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Nombre del Servicio</label>
-            <input
-              type="text"
-              name="servicios.nombreServicio"
-              className={styles.formInput}
-              value={formData.servicios[0].nombreServicio}
-              onChange={handleChange}
-              placeholder="Ej: Tinte, Corte, etc."
-              disabled={loading}
-            />
-          </div>
+            <div className="col-md-4 mb-3">
+              <label className={styles.formLabel}>Precio del Servicio</label>
+              <input
+                type="number"
+                name="servicios.precioServicio"
+                className={styles.formInput}
+                value={formData.servicios[0].precioServicio}
+                onChange={handleChange}
+                placeholder="Ej: 50000"
+                disabled={loading}
+              />
+            </div>
 
-          <div className="col-md-6 mb-3">
-            <label className={styles.formLabel}>Condiciones Previas</label>
-            <textarea
-              name="servicios.condicionesPrevias"
-              className={styles.formInput}
-              value={formData.servicios[0].condicionesPrevias}
-              onChange={handleChange}
-              placeholder="Ej: No lavarse el cabello 24h antes"
-              disabled={loading}
-              rows="2"
-            />
-          </div>
+            <div className="col-md-4 mb-3">
+              <label className={styles.formLabel}>Tiempo Estimado (minutos)</label>
+              <input
+                type="number"
+                name="servicios.tiempoEstimadoServicio"
+                className={styles.formInput}
+                value={formData.servicios[0].tiempoEstimadoServicio}
+                onChange={handleChange}
+                placeholder="Ej: 60"
+                disabled={loading}
+              />
+            </div>
 
-          <div className="col-md-4 mb-3">
-            <label className={styles.formLabel}>Precio del Servicio</label>
-            <input
-              type="number"
-              name="servicios.precioServicio"
-              className={styles.formInput}
-              value={formData.servicios[0].precioServicio}
-              onChange={handleChange}
-              placeholder="Ej: 50000"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="col-md-4 mb-3">
-            <label className={styles.formLabel}>Tiempo Estimado (minutos)</label>
-            <input
-              type="number"
-              name="servicios.tiempoEstimadoServicio"
-              className={styles.formInput}
-              value={formData.servicios[0].tiempoEstimadoServicio}
-              onChange={handleChange}
-              placeholder="Ej: 60"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="col-md-4 mb-3">
-            <div className={styles.formGroup}>
-              <div className="form-check mt-4">
-                <input
-                  type="checkbox"
-                  name="servicios.promocion"
-                  className="form-check-input"
-                  checked={formData.servicios[0].promocion}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-                <label className={styles.formLabel}>
-                  ¿Tiene promoción?
-                </label>
+            <div className="col-md-4 mb-3">
+              <div className={styles.formGroup}>
+                <div className="form-check mt-4">
+                  <input
+                    type="checkbox"
+                    name="servicios.promocion"
+                    className="form-check-input"
+                    checked={formData.servicios[0].promocion}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                  <label className={styles.formLabel}>
+                    ¿Tiene promoción?
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="col-md-4 mb-3">
-            <label className={styles.formLabel}>Estado de la cita</label>
-            <select 
-              name="estado" 
-              className={styles.formInput}
-              value={formData.estado} 
-              onChange={handleChange}
-              disabled={loading}
-            >
-              <option value="pendiente">Pendiente</option>
-              <option value="completada">Completada</option>
-              <option value="cancelada">Cancelada</option>
-            </select>
-          </div>
+            <div className="col-md-4 mb-3">
+              <label className={styles.formLabel}>Estado de la cita</label>
+              <select 
+                name="estado" 
+                className={styles.formInput}
+                value={formData.estado} 
+                onChange={handleChange}
+                disabled={loading}
+              >
+                <option value="pendiente">Pendiente</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </div>
 
-          <div className="col-md-4 mb-3">
-            <label className={styles.formLabel}>Método de pago</label>
-            <select
-              name="pago.metodoPago"
-              className={styles.formInput}
-              value={formData.pago.metodoPago}
-              onChange={handleChange}
-              disabled={loading}
-            >
-              <option value="">Seleccione método de pago</option>
-              <option value="efectivo">Efectivo</option>
-              <option value="tarjeta">Tarjeta</option>
-              <option value="transferencia">Transferencia</option>
-            </select>
-          </div>
+            <div className="col-md-4 mb-3">
+              <label className={styles.formLabel}>Método de pago</label>
+              <select
+                name="pago.metodoPago"
+                className={styles.formInput}
+                value={formData.pago.metodoPago}
+                onChange={handleChange}
+                disabled={loading}
+              >
+                <option value="">Seleccione método de pago</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="transferencia">Transferencia</option>
+              </select>
+            </div>
 
-          <div className="col-md-4 mb-3">
-            <label className={styles.formLabel}>Total a pagar</label>
-            <input 
-              name="pago.totalPagado" 
-              type="number" 
-              className={styles.formInput}
-              value={formData.pago.totalPagado} 
-              onChange={handleChange}
-              placeholder="Ingrese el monto a pagar"
-              disabled={loading}
-            />
-          </div>
-        </div>
-
-        <button 
-          className={styles.buttonPrimary}
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? 'Guardando...' : (citaSeleccionada ? 'Actualizar Cita' : 'Guardar Cita')}
-        </button>
-      </form>
-    </section>
+            <div className="col-md-4 mb-3">
+              <label className={styles.formLabel}>Total a pagar</label>
+              <input 
+                name="pago.totalPagado" 
+                type="number" 
+                className={styles.formInput}
+                value={formData.pago.totalPagado} 
+                onChange={handleChange}
+                placeholder="Ingrese el monto a pagar"
+                disabled={loading}
+              />
+            </div>
+          </Box>
+          <Divider sx={{ my: 2 }} />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            disabled={loading}
+            sx={{ fontWeight: 600, fontSize: '1rem', py: 1.2 }}
+          >
+            {loading ? 'Guardando...' : (citaSeleccionada ? 'Actualizar Cita' : 'Guardar Cita')}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

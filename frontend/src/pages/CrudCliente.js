@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import ClienteList from '../components/ClienteList';
 import ClienteForm from '../components/ClienteForm';
 import styles from '../components/Cliente.module.css';
+import Box from '@mui/material/Box';
 
 function CrudCliente() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
@@ -27,32 +28,34 @@ function CrudCliente() {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4 text-center">Gestión de Clientes</h1>
-      
-      {successMessage && (
-        <div className="alert alert-success" role="alert">
-          {successMessage}
-        </div>
-      )}
-      
-      {errorMessage && (
-        <div className="alert alert-danger" role="alert">
-          {errorMessage}
-        </div>
-      )}
+    <Box sx={{ flexGrow: 1, minHeight: '100vh', py: 4, mt: { xs: 7, md: 9 } }}>
+      <div className="container mt-5">
+        <h1 className="mb-4 text-center">Gestión de Clientes</h1>
+        
+        {successMessage && (
+          <div className="alert alert-success" role="alert">
+            {successMessage}
+          </div>
+        )}
+        
+        {errorMessage && (
+          <div className="alert alert-danger" role="alert">
+            {errorMessage}
+          </div>
+        )}
 
-      <ClienteForm 
-        clienteSeleccionado={clienteSeleccionado} 
-        onSave={handleSave}
-        onActionSuccess={handleActionSuccess}
-      />
-      <ClienteList 
-        onEdit={setClienteSeleccionado}
-        onActionSuccess={handleActionSuccess}
-        updateTrigger={updateTrigger}
-      />
-    </div>
+        <ClienteForm 
+          clienteSeleccionado={clienteSeleccionado} 
+          onSave={handleSave}
+          onActionSuccess={handleActionSuccess}
+        />
+        <ClienteList 
+          onEdit={setClienteSeleccionado}
+          onActionSuccess={handleActionSuccess}
+          updateTrigger={updateTrigger}
+        />
+      </div>
+    </Box>
   );
 }
 
