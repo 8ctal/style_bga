@@ -45,24 +45,28 @@
 /* Estilos para tablas */
 .tableContainer {
   overflow-x: auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 10px #d1d5db;
 }
 
 .table {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 8px #d1d5db;
 }
 
 .tableHeader {
-  background-color: #f8f9fa;
+  background-color: #232323;
   font-weight: 600;
-  color: #2c3e50;
+  color: #fff;
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid #e0e6f0;
 }
 
 .tableCell {
@@ -70,10 +74,11 @@
   text-align: left;
   border-bottom: 1px solid #dee2e6;
   vertical-align: middle;
+  color: #232323;
 }
 
 .tableRow:hover {
-  background-color: #f5f8fa;
+  background-color: #f7f8fa;
 }
 
 /* Estilos para mensajes */
@@ -85,11 +90,11 @@
 
 /* Utilidades */
 .card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
+  background-color: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(44,62,80,0.07);
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .flexBetween {
@@ -120,11 +125,13 @@
 }
 
 .badge {
-  background-color: #e9ecef;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #2c3e50;
+  background: #e0e0e0;
+  color: #232323;
+  border-radius: 1rem;
+  padding: 0.3rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
 }
 
 /* Estilos para los botones de acción */
@@ -135,17 +142,37 @@
 }
 
 .editButton {
-  composes: button;
-  background-color: black;
-  color: white;
-  padding: 6px 12px;
+  background: linear-gradient(90deg, #232323 60%, #444 100%);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #d1d5db;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-right: 0.5rem;
+}
+
+.editButton:hover {
+  background: linear-gradient(90deg, #444 0%, #232323 100%);
+  box-shadow: 0 4px 16px #a1a1aa;
 }
 
 .deleteButton {
-  composes: button;
-  background-color: #dc3545;
-  color: white;
-  padding: 6px 12px;
+  background: #fff;
+  color: #B91C1C;
+  border: 1.5px solid #d1d5db;
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.deleteButton:hover {
+  background: #B91C1C;
+  color: #fff;
 }
 
 /* Estilos para la paginación */

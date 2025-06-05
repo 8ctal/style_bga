@@ -42,6 +42,27 @@
   transform: translateY(-1px);
 }
 
+.buttonSuccess {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.buttonSuccess:hover {
+  background-color: #218838;
+}
+
+.buttonSuccess:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
 /* Estilos para formularios */
 .formGroup {
   margin-bottom: 1rem;
@@ -116,9 +137,11 @@
   background-color: #d4edda;
   color: #155724;
   padding: 1rem;
-  border-radius: 4px;
   margin-bottom: 1rem;
   border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
 }
 
 /* Utilidades */

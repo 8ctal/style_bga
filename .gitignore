@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+scripts/create_admin_and_stylists.js
+scripts/
+
+## TEMPLATES ##
+templates_to_impl

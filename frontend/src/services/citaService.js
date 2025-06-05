@@ -97,3 +97,23 @@ export const getEstilistas = () => api.get('/usuarios/list?rol=estilista');
 
 // Función para obtener servicios
 export const getServicios = () => api.get('/servicios/list');
+
+export const actualizarEstadoCita = async (id, nuevoEstado) => {
+  try {
+    // Primero obtenemos la cita actual
+    const citaResponse = await getCitaById(id);
+    const citaActual = citaResponse.data;
+    
+    // Actualizamos solo el estado
+    const citaActualizada = {
+      ...citaActual,
+      estado: nuevoEstado
+    };
+    
+    // Enviamos la actualización
+    return api.put('/citas/editar', citaActualizada);
+  } catch (error) {
+    console.error('Error al actualizar el estado de la cita:', error);
+    throw error;
+  }
+};

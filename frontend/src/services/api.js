@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authService } from './authService';
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -12,19 +13,16 @@ export const api = axios.create({
   withCredentials: false // Importante para CORS
 });
 
-// Interceptor para peticiones
+// Interceptor para agregar el token a las peticiones
 api.interceptors.request.use(
   (config) => {
-    console.log('Enviando petición:', {
-      url: config.url,
-      method: config.method,
-      baseURL: config.baseURL,
-      headers: config.headers
-    });
+    const user = authService.getCurrentUser();
+    if (user && user.token) {
+      config.headers.Authorization = `Bearer ${user.token}`;
+    }
     return config;
   },
   (error) => {
-    console.error('Error en la petición:', error);
     return Promise.reject(error);
   }
 );
@@ -46,6 +44,10 @@ api.interceptors.response.use(
       message: error.response?.data || error.message,
       error: error
     });
+    if (error.response && error.response.status === 401) {
+      authService.logout();
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
